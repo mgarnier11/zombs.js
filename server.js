@@ -10,7 +10,6 @@ app.use(logger('dev'));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
-var server = http.createServer(app);
-server.listen(port, () => {
+app.listen(port, () => {
     console.log('listenning on ' + port)
 });
