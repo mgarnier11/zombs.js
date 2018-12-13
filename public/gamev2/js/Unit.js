@@ -34,6 +34,8 @@ Unit = function (game, x, y, obj) {
     }
 
     if (this.playerControlled) this.game.player = this;
+
+    this.tmp = 0;
 }
 
 Unit.prototype = Object.create(Phaser.Sprite.prototype);
@@ -61,11 +63,20 @@ Unit.prototype.update = function () {
         }
     } else if (this.game.player) {
         //if (this.currentSpeed < this.maxSpeed) this.currentSpeed += this.accelerationRate;
-        let angleToPlayer = this.game.physics.arcade.angleBetween(this, this.game.player) - this.worldRotation;
-        if (angleToPlayer > 0.05) this.angle += this.turnRate;
-        else if (angleToPlayer < -0.05) this.angle -= this.turnRate;
+        let angleToPlayer = this.game.physics.arcade.angleBetween(this, this.game.player);
+        if (angleToPlayer < -3.10) this.angle -= this.turnRate;
+        else if (angleToPlayer > 3.10) this.angle += this.turnRate;
+        else if (angleToPlayer > this.worldRotation) this.angle += this.turnRate;
+        else if (angleToPlayer < this.worldRotation) this.angle -= this.turnRate;
+        if (this.game.time.now > this.tmp) {
+            this.tmp = game.time.now + 1000;
+            console.log("Worldangle : " + this.worldRotation);
+            console.log("angle : " + this.rotation);
+            console.log("angleBetwxeen : " + (this.game.physics.arcade.angleBetween(this, this.game.player)));
+        }
 
-        console.log(angleToPlayer);
+
+
 
         //this.rotation = this.game.physics.arcade.angleToXY(this, this.game.player.x, this.game.player.y);
 
