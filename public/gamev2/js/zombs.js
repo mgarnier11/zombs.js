@@ -49,22 +49,27 @@ function create() {
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
-    game.turret = new Unit(game, game.width / 2, game.width / 2, unit);
-    game.add.existing(game.turret);
+    game.cursors = game.input.keyboard.createCursorKeys();
+
+
+
+    player = new Unit(game, 100, 100, playerObj);
+    game.add.existing(player);
+
+    ennemy = new Unit(game, 300, 300, ennemyObj);
 
     game.ennemies = game.add.group();
+    game.ennemies.add(ennemy);
 
-    game.camera.follow(game.turret);
 
-    cursors = game.input.keyboard.createCursorKeys();
+
+    game.camera.follow(player);
+
 }
 
 function update() {
-    if (game.input.activePointer.leftButton.isDown) {
-        console.log(game);
+    //game.physics.arcade.collide(player, game.ennemies);
 
-        game.turret.hitAll();
-    }
 }
 
 function render() {
@@ -77,24 +82,46 @@ function intRnd(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
-var unit = {
+var playerObj = {
     "health": 5,
-    "sprite": "bullet3",
+    "sprite": "tank0",
+    "playerControlled": true,
+    "maxSpeed": 400,
+    "accelerationRate": 5,
+    "decelerationRate": 5,
+    "turnRate": 4,
     "weapons": [
         {
-            "x": 0,
-            "y": 0,
-            "rotation": 0,
-            "damage": 10,
-            "reload": 100,
-            "lifespan": 1000,
-            "speed": 1200,
+            "damage": 0,
+            "range": 0,
+            "reload": 500,
+            "action": "auto"
+        },
+        {
+            "damage": 1,
+            "range": 500,
+            "reload": 500,
             "sprite": "turret0",
-            "ammos": 40,
-            "bullet": {
-                "sprite": "bullet0",
-                "lifespan": 1000
-            }
+            "action": "left"
+        }
+    ]
+};
+
+
+var ennemyObj = {
+    "health": 1,
+    "sprite": "tank0",
+    "playerControlled": false,
+    "maxSpeed": 100,
+    "accelerationRate": 4,
+    "decelerationRate": 5,
+    "turnRate": 2,
+    "weapons": [
+        {
+            "damage": 1,
+            "range": 500,
+            "reload": 500,
+            "sprite": "turret0"
         }
     ]
 };
