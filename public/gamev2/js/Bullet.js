@@ -9,16 +9,16 @@ Bullet = function (game, parent, obj) {
     this.body.onOverlap.add(this.onOverlap, this);
     this.body.onCollide = new Phaser.Signal();
     this.body.onCollide.add(this.onCollide, this);
-    this.body.stopVelocityOnCollide = !obj.penetrant;
+    this.body.stopVelocityOnCollide = (!obj.penetrant || true);
     this.body.onMoveComplete = new Phaser.Signal()
     this.body.onMoveComplete.add(this.onMoveComplete, this);
 
     this.obj = obj;
-    this.damage = obj.damage;
-    this.bulletSpeed = obj.speed;
-    this.penetrant = obj.penetrant;
+    this.damage = (obj.damage || 1);
+    this.bulletSpeed = (obj.speed || 1000);
+    this.penetrant = (obj.penetrant || false);
     this.weapon = parent;
-    this.lifeTime = obj.lifespan;
+    this.lifeTime = (obj.lifespan || 1000);
     this.hitAnimation = obj.hitAnimation;
 
     this.overlapTime = 0;
@@ -42,7 +42,7 @@ Bullet.prototype.fire = function (bulletRotation = 0) {
     this.reset(this.weapon.world.x + (25 * Math.cos(this.weapon.worldRotation)), this.weapon.world.y + (25 * Math.sin(this.weapon.worldRotation)));
     this.body.rotation = this.weapon.worldRotation + Phaser.Math.degToRad(bulletRotation);
     this.rotation = this.body.rotation;
-    this.body.moveFrom(this.weapon.range, this.bulletSpeed, Phaser.Math.radToDeg(this.body.rotation));
+    this.body.moveFrom(this.lifeTime, this.bulletSpeed, Phaser.Math.radToDeg(this.body.rotation));
 }
 
 Bullet.prototype.onCollide = function (thisBullet, unit) {
@@ -60,5 +60,6 @@ Bullet.prototype.onOverlap = function (thisBullet, unit) {
 }
 
 Bullet.prototype.onMoveComplete = function (thisBullet) {
-    //this.kill();
+
+    if (!this.penetrant) this.kill();
 }

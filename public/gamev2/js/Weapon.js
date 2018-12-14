@@ -5,12 +5,11 @@ Weapon = function (game, parent, obj) {
     this.anchor.setTo(0.3, 0.5);
 
     this.obj = obj;
-    this.reload = this.obj.reload;
-    this.damage = this.obj.damage;
-    this.range = this.obj.range;
-    this.action = this.obj.action;
-    this.turnRate = this.obj.turnRate;
-    this.multiShot = this.obj.multiShot;
+    this.reload = (obj.reload || 500);
+    this.damage = (obj.damage || 1);
+    this.ranged = (obj.ranged || false);
+    this.action = (obj.action || 'auto');
+    this.multiShot = (obj.multiShot || false);
     this.unit = parent;
 
     this.bulletTime = 0;
@@ -18,7 +17,7 @@ Weapon = function (game, parent, obj) {
     this.bullets = this.game.add.group(undefined, "bulletsGroup", false, true, Phaser.Physics.ARCADE);
 
     //this.addChild(this.bullets);
-    if (this.obj.bullet) {
+    if (this.obj.bullet && this.obj.bullet.sprite) {
         for (let index = 0; index < this.obj.ammos; index++) {
             this.bullets.add(new Bullet(this.game, this, this.obj.bullet));
         }
@@ -45,9 +44,13 @@ Weapon.prototype.update = function () {
         */
         this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.x, this.game.input.activePointer.y) - this.unit.rotation;
 
-        var input = this.game.input.activePointer[this.action + 'Button'];
-        if (input && input.isDown) {
-            this.fire();
+        if (this.action == 'auto') {
+            if (this.ranged) this.fire();
+        } else {
+            let input = this.game.input.activePointer[this.action + 'Button'];
+            if (input && input.isDown) {
+                if (this.ranged) this.fire();
+            }
         }
     } else {
         if (this.game.player) {
@@ -64,13 +67,17 @@ Weapon.prototype.update = function () {
             */
 
             this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.player.x, this.game.player.y) - this.unit.rotation;
+
+            if (this.action == 'auto') {
+                if (this.ranged) this.fire();
+            }
         }
     }
 }
 
 Weapon.prototype.fire = function () {
     if (this.game.time.now > this.bulletTime) {
-        this.bulletTime = game.time.now + this.reload;
+        this.bulletTime = this.game.time.now + this.reload;
         if (this.multiShot > 1) {
             let baseAngle = (-(2.5) * (this.multiShot - 1));
             for (let i = 0; i < this.multiShot; i++) {
@@ -80,7 +87,6 @@ Weapon.prototype.fire = function () {
         } else {
             let bullet = this.bullets.getFirstExists(false);
             if (bullet) bullet.fire();
-
         }
     }
 }

@@ -13,14 +13,14 @@ Unit = function (game, x, y, obj) {
     this.body.onOverlap.add(this.onOverlap, this);
 
     this.obj = obj;
-    this.health = this.obj.health;
-    this.maxHealth = this.obj.health;
-    this.playerControlled = this.obj.playerControlled;
-    this.accelerationRate = this.obj.accelerationRate;
-    this.decelerationRate = this.obj.decelerationRate;
-    this.turnRate = this.obj.turnRate;
-    this.maxSpeed = this.obj.maxSpeed;
-    this.destroyAnimation = this.obj.destroyAnimation;
+    this.health = obj.health;
+    this.maxHealth = obj.health;
+    this.playerControlled = obj.playerControlled;
+    this.accelerationRate = obj.accelerationRate;
+    this.decelerationRate = obj.decelerationRate;
+    this.turnRate = obj.turnRate;
+    this.maxSpeed = obj.maxSpeed;
+    this.destroyAnimation = obj.destroyAnimation;
 
     this.currentSpeed = 0;
     this.collideTime = 0;
@@ -30,7 +30,7 @@ Unit = function (game, x, y, obj) {
     this.weapons = this.game.add.group(this, "weaponsGroup", false, true, Phaser.Physics.ARCADE);
     if (this.obj.weapons) {
         this.obj.weapons.forEach((weapon) => {
-            this.weapons.add(new Weapon(this.game, this, weapon));
+            if (weapon.sprite) this.weapons.add(new Weapon(this.game, this, weapon));
         });
     }
 
@@ -77,7 +77,7 @@ Unit.prototype.update = function () {
             else this.angle -= this.turnRate;
         }
 
-        //if (this.currentSpeed > 0) this.game.physics.arcade.velocityFromRotation(this.rotation, this.currentSpeed, this.body.velocity);
+        if (this.currentSpeed > 0) this.game.physics.arcade.velocityFromRotation(this.rotation, this.currentSpeed, this.body.velocity);
 
         //this.rotation = this.game.physics.arcade.angleToXY(this, this.game.player.x, this.game.player.y);
 

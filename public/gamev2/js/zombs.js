@@ -53,31 +53,35 @@ function create() {
 
 
 
-    player = new Unit(game, 100, 100, playerObj);
+    player = new Unit(game, 800, 400, playerObj);
     game.add.existing(player);
-
-    ennemy = new Unit(game, 300, 300, ennemyObj);
-
     game.ennemies = game.add.group();
-    game.ennemies.add(ennemy);
 
 
-
+    for (let i = 0; i < 4; i++) {
+        ennemy = new Unit(game, 0, 200 * i, ennemyObj);
+        game.ennemies.add(ennemy);
+    }
     game.camera.follow(player);
 
 }
 
 function update() {
     game.physics.arcade.collide(player, game.ennemies);
+    game.physics.arcade.collide(game.ennemies);
 
     game.physics.arcade.overlap(player.bullets, game.ennemies);
+
+    game.ennemies.getAll().forEach((ennemy) => {
+        game.physics.arcade.overlap(player, ennemy.bullets);
+
+    })
 
 }
 
 function render() {
 
 }
-
 
 function intRnd(min, max) {
     min = Math.ceil(min);
@@ -100,7 +104,7 @@ function playAnimation(game, x, y, sprite) {
 }
 
 var playerObj = {
-    "health": 5,
+    "health": 100,
     "sprite": "tank0",
     "playerControlled": true,
     "maxSpeed": 400,
@@ -109,28 +113,29 @@ var playerObj = {
     "turnRate": 4,
     "destroyAnimation": "explosion1",
     "weapons": [
+        /*
         {
             "damage": 1,
-            "range": 0,
+            "ranged": false,
             "reload": 500,
             "action": "auto"
-        },
+        },*/
         {
             "damage": 1,
-            "range": 1000,
-            "reload": 500,
+            "ranged": true,
+            "reload": 100,
             "sprite": "turret0",
             "action": "left",
             "turnRate": 4,
             "multiShot": 1,
             "ammos": 20,
             "bullet": {
-                "speed": 1000,
-                "damage": 1,
+                "speed": 750,
+                "damage": 0,
                 "lifespan": 1000,
                 "sprite": "bullet1",
                 "hitAnimation": "explosion3",
-                "penetrant": true
+                "penetrant": false
             }
         }
     ]
@@ -138,20 +143,32 @@ var playerObj = {
 
 
 var ennemyObj = {
-    "health": 5,
+    "health": 100,
     "sprite": "tank0",
     "playerControlled": false,
-    "maxSpeed": 100,
-    "accelerationRate": 4,
+    "maxSpeed": 200,
+    "accelerationRate": 5,
     "decelerationRate": 5,
-    "turnRate": 2,
-    "destroyAnimation": "explosion0",
+    "turnRate": 4,
+    "destroyAnimation": "explosion1",
     "weapons": [
         {
-            "damage": 5,
-            "range": 0,
-            "reload": 500,
-            "action": "auto"
-        },
+            "damage": 1,
+            "ranged": true,
+            "reload": 750,
+            "sprite": "turret0",
+            "action": "auto",
+            "turnRate": 4,
+            "multiShot": 1,
+            "ammos": 20,
+            "bullet": {
+                "speed": 750,
+                "damage": 0,
+                "lifespan": 1000,
+                "sprite": "bullet1",
+                "hitAnimation": "explosion3",
+                "penetrant": false
+            }
+        }
     ]
 };
