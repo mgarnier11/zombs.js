@@ -7,7 +7,9 @@ Bullet = function (game, parent, obj) {
 
     this.body.onOverlap = new Phaser.Signal();
     this.body.onOverlap.add(this.onOverlap, this);
-    this.body.stopVelocityOnCollide = false;
+    this.body.onCollide = new Phaser.Signal();
+    this.body.onCollide.add(this.onCollide, this);
+    this.body.stopVelocityOnCollide = !obj.penetrant;
     this.body.onMoveComplete = new Phaser.Signal()
     this.body.onMoveComplete.add(this.onMoveComplete, this);
 
@@ -15,7 +17,12 @@ Bullet = function (game, parent, obj) {
     this.damage = obj.damage;
     this.bulletSpeed = obj.speed;
     this.penetrant = obj.penetrant;
-    this.weapon = parent
+    this.weapon = parent;
+    this.lifeTime = obj.lifespan;
+    this.hitAnimation = obj.hitAnimation;
+
+    this.overlapTime = 0;
+
 
     this.kill();
 }
@@ -31,28 +38,27 @@ Bullet.prototype.fire = function (bulletRotation = 0) {
 
     //this.game.world.moveUp(this.weapon.bullets);
     //this.game.world.bringToTop(this.weapon);
-    this.reset(this.weapon.world.x, this.weapon.world.y);
+    this.lifespan = this.lifeTime;
+    this.reset(this.weapon.world.x + (25 * Math.cos(this.weapon.worldRotation)), this.weapon.world.y + (25 * Math.sin(this.weapon.worldRotation)));
     this.body.rotation = this.weapon.worldRotation + Phaser.Math.degToRad(bulletRotation);
     this.rotation = this.body.rotation;
-    this.body.moveFrom(5000, 200, this.body.rotation);
     this.body.moveFrom(this.weapon.range, this.bulletSpeed, Phaser.Math.radToDeg(this.body.rotation));
-    /*
-    this.body.rotation = this.parent.worldRotation + Phaser.Math.degToRad(this.parent.bulletRotation);
-    this.rotation = this.body.rotation;
-
-    this.body.moveFrom(5000); //Arcade
-    */
-
 }
 
-Bullet.prototype.onCollide = function (thisBullet, otherBullet) {
+Bullet.prototype.onCollide = function (thisBullet, unit) {
 
 }
 
 Bullet.prototype.onOverlap = function (thisBullet, unit) {
+    if (this.game.time.now > this.overlapTime) {
+        this.overlapTime = this.game.time.now + 100;
 
+        unit.damage(this.damage);
+
+        playAnimation(this.game, (unit.world.x + this.world.x) / 2, (unit.world.y + this.world.y) / 2, this.hitAnimation);
+    }
 }
 
 Bullet.prototype.onMoveComplete = function (thisBullet) {
-    this.kill();
+    //this.kill();
 }

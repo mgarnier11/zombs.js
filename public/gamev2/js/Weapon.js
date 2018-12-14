@@ -1,4 +1,4 @@
-Weapon = function (game, obj) {
+Weapon = function (game, parent, obj) {
     Phaser.Sprite.call(this, game, obj.x, obj.y, obj.sprite);
 
     this.game = game;
@@ -11,6 +11,7 @@ Weapon = function (game, obj) {
     this.action = this.obj.action;
     this.turnRate = this.obj.turnRate;
     this.multiShot = this.obj.multiShot;
+    this.unit = parent;
 
     this.bulletTime = 0;
     //this.game.add = new Phaser.Group(this.game, this, "bullets", false, true, Phaser.Physics.ARCADE);
@@ -22,12 +23,14 @@ Weapon = function (game, obj) {
             this.bullets.add(new Bullet(this.game, this, this.obj.bullet));
         }
     }
+
+    this.unit.bullets = this.bullets;
 }
 
 Weapon.prototype = Object.create(Phaser.Sprite.prototype);
 Weapon.prototype.constructor = Weapon;
 Weapon.prototype.update = function () {
-    if (this.parent.playerControlled) {
+    if (this.unit.playerControlled) {
         /*
         let angleToPointer = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.x, this.game.input.activePointer.y) - this.worldRotation;
 
@@ -40,7 +43,8 @@ Weapon.prototype.update = function () {
             else this.angle -= this.turnRate;
         }
         */
-        this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.x, this.game.input.activePointer.y) - this.parent.rotation;
+        this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.x, this.game.input.activePointer.y) - this.unit.rotation;
+
         var input = this.game.input.activePointer[this.action + 'Button'];
         if (input && input.isDown) {
             this.fire();
@@ -59,7 +63,7 @@ Weapon.prototype.update = function () {
             }
             */
 
-            this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.player.x, this.game.player.y) - this.parent.rotation;
+            this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.player.x, this.game.player.y) - this.unit.rotation;
         }
     }
 }

@@ -59,7 +59,7 @@ function create() {
     ennemy = new Unit(game, 300, 300, ennemyObj);
 
     game.ennemies = game.add.group();
-    //game.ennemies.add(ennemy);
+    game.ennemies.add(ennemy);
 
 
 
@@ -70,11 +70,11 @@ function create() {
 function update() {
     game.physics.arcade.collide(player, game.ennemies);
 
+    game.physics.arcade.overlap(player.bullets, game.ennemies);
+
 }
 
 function render() {
-    game.debug.spriteInfo(player.weapons[1], 32, 32);
-    //game.debug.spriteBounds(player.weapons[1]);
 
 }
 
@@ -84,6 +84,21 @@ function intRnd(min, max) {
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
+
+function playAnimation(game, x, y, sprite) {
+    if (sprite && game) {
+        let animSprite = game.add.sprite(x, y, sprite);
+        animSprite.anchor.setTo(0.5, 0.5)
+        animSprite.animations.add('animation', null, 20, false);
+
+        let animation = animSprite.animations.getAnimation('animation');
+        animation.onComplete = new Phaser.Signal();
+        animation.onComplete.add((animSprite) => { animSprite.destroy(); }, animSprite);
+
+        animSprite.play('animation');
+    }
+}
+
 var playerObj = {
     "health": 5,
     "sprite": "tank0",
@@ -92,6 +107,7 @@ var playerObj = {
     "accelerationRate": 5,
     "decelerationRate": 5,
     "turnRate": 4,
+    "destroyAnimation": "explosion1",
     "weapons": [
         {
             "damage": 1,
@@ -106,13 +122,15 @@ var playerObj = {
             "sprite": "turret0",
             "action": "left",
             "turnRate": 4,
-            "multiShot": 5,
+            "multiShot": 1,
             "ammos": 20,
             "bullet": {
-                "speed": 500,
+                "speed": 1000,
                 "damage": 1,
+                "lifespan": 1000,
                 "sprite": "bullet1",
-                "penetrant": false
+                "hitAnimation": "explosion3",
+                "penetrant": true
             }
         }
     ]
@@ -126,14 +144,14 @@ var ennemyObj = {
     "maxSpeed": 100,
     "accelerationRate": 4,
     "decelerationRate": 5,
-    "turnRate": 4,
+    "turnRate": 2,
+    "destroyAnimation": "explosion0",
     "weapons": [
         {
-            "damage": 1,
-            "range": 500,
+            "damage": 5,
+            "range": 0,
             "reload": 500,
-            "sprite": "turret0",
-            "turnRate": 5
-        }
+            "action": "auto"
+        },
     ]
 };

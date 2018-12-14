@@ -20,27 +20,29 @@ Unit = function (game, x, y, obj) {
     this.decelerationRate = this.obj.decelerationRate;
     this.turnRate = this.obj.turnRate;
     this.maxSpeed = this.obj.maxSpeed;
+    this.destroyAnimation = this.obj.destroyAnimation;
 
     this.currentSpeed = 0;
     this.collideTime = 0;
 
     this.healthBar = this.addChild(new HealthBar(this.game, this.obj.healthBar));
 
-    this.weapons = [];
+    this.weapons = this.game.add.group(this, "weaponsGroup", false, true, Phaser.Physics.ARCADE);
     if (this.obj.weapons) {
         this.obj.weapons.forEach((weapon) => {
-            this.weapons.push(this.addChild(new Weapon(this.game, weapon)));
+            this.weapons.add(new Weapon(this.game, this, weapon));
         });
     }
 
     if (this.playerControlled) this.game.player = this;
-
-    this.tmp = 0;
 }
 
 Unit.prototype = Object.create(Phaser.Sprite.prototype);
 Unit.prototype.constructor = Unit;
+
 Unit.prototype.update = function () {
+    this.updateWeapons();
+
     if (this.playerControlled) {
         if (this.game.cursors.left.isDown) this.angle -= this.turnRate;
         else if (this.game.cursors.right.isDown) this.angle += this.turnRate;
@@ -63,28 +65,27 @@ Unit.prototype.update = function () {
         }
     } else if (this.game.player) {
         if (this.currentSpeed < this.maxSpeed) this.currentSpeed += this.accelerationRate;
+
         let angleToPlayer = this.game.physics.arcade.angleBetween(this, this.game.player) - this.worldRotation;
 
         if (angleToPlayer > 0.10) {
-            if (angleToPlayer > 3.14) this.angle -= this.turnRate;
+            if (angleToPlayer > 3.04) this.angle -= this.turnRate;
             else this.angle += this.turnRate;
         }
-        else if (angleToPlayer < 0.10) {
-            if (angleToPlayer < -3.14) this.angle += this.turnRate;
+        else if (angleToPlayer < -0.10) {
+            if (angleToPlayer < -3.04) this.angle += this.turnRate;
             else this.angle -= this.turnRate;
         }
 
+        //if (this.currentSpeed > 0) this.game.physics.arcade.velocityFromRotation(this.rotation, this.currentSpeed, this.body.velocity);
 
         //this.rotation = this.game.physics.arcade.angleToXY(this, this.game.player.x, this.game.player.y);
 
-        if (this.currentSpeed > 0) this.game.physics.arcade.velocityFromRotation(this.rotation, this.currentSpeed, this.body.velocity);
     } else {
         this.angle += 1;
     }
 
     this.healthBar.update(this.health * 100 / this.maxHealth);
-    this.updateWeapons();
-
 };
 
 Unit.prototype.onCollide = function (thisUnit, otherUnit) {
@@ -107,19 +108,20 @@ Unit.prototype.onOverlap = function (thisUnit, otherUnit) {
 }
 
 Unit.prototype.doDestroy = function () {
-    console.log(this.game);
     this.pendingDestroy = true;
+    playAnimation(this.game, this.world.x, this.world.y, this.destroyAnimation);
 }
 
 Unit.prototype.damage = function (damage) {
     this.health -= damage;
+
     if (this.health <= 0) this.doDestroy();
 }
 
 Unit.prototype.getMeleeWeapon = function () {
     let meleeWeapon = null;
     if (this.weapons) {
-        for (let weapon of this.weapons) {
+        for (let weapon of this.weapons.children) {
             if (weapon.range == 0 && weapon.damage > (meleeWeapon ? meleeWeapon.damage : 0)) meleeWeapon = weapon;
         }
     }
