@@ -59,7 +59,7 @@ function create() {
     ennemy = new Unit(game, 300, 300, ennemyObj);
 
     game.ennemies = game.add.group();
-    game.ennemies.add(ennemy);
+    //game.ennemies.add(ennemy);
 
 
 
@@ -68,13 +68,13 @@ function create() {
 }
 
 function update() {
-    //game.physics.arcade.collide(player, game.ennemies);
+    game.physics.arcade.collide(player, game.ennemies);
 
 }
 
 function render() {
-    game.debug.spriteInfo(ennemy, 32, 32);
-    game.debug.spriteInfo(player, 32, 150);
+    game.debug.spriteInfo(player.weapons[1], 32, 32);
+    //game.debug.spriteBounds(player.weapons[1]);
 
 }
 
@@ -94,36 +94,46 @@ var playerObj = {
     "turnRate": 4,
     "weapons": [
         {
-            "damage": 0,
+            "damage": 1,
             "range": 0,
             "reload": 500,
             "action": "auto"
         },
         {
             "damage": 1,
-            "range": 500,
+            "range": 1000,
             "reload": 500,
             "sprite": "turret0",
-            "action": "left"
+            "action": "left",
+            "turnRate": 4,
+            "multiShot": 5,
+            "ammos": 20,
+            "bullet": {
+                "speed": 500,
+                "damage": 1,
+                "sprite": "bullet1",
+                "penetrant": false
+            }
         }
     ]
 };
 
 
 var ennemyObj = {
-    "health": 1,
+    "health": 5,
     "sprite": "tank0",
     "playerControlled": false,
     "maxSpeed": 100,
     "accelerationRate": 4,
     "decelerationRate": 5,
-    "turnRate": 2,
+    "turnRate": 4,
     "weapons": [
         {
             "damage": 1,
             "range": 500,
             "reload": 500,
-            "sprite": "turret0"
+            "sprite": "turret0",
+            "turnRate": 5
         }
     ]
 };

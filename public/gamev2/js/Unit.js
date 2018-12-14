@@ -62,20 +62,17 @@ Unit.prototype.update = function () {
 
         }
     } else if (this.game.player) {
-        //if (this.currentSpeed < this.maxSpeed) this.currentSpeed += this.accelerationRate;
-        let angleToPlayer = this.game.physics.arcade.angleBetween(this, this.game.player);
-        if (angleToPlayer < -3.10) this.angle -= this.turnRate;
-        else if (angleToPlayer > 3.10) this.angle += this.turnRate;
-        else if (angleToPlayer > this.worldRotation) this.angle += this.turnRate;
-        else if (angleToPlayer < this.worldRotation) this.angle -= this.turnRate;
-        if (this.game.time.now > this.tmp) {
-            this.tmp = game.time.now + 1000;
-            console.log("Worldangle : " + this.worldRotation);
-            console.log("angle : " + this.rotation);
-            console.log("angleBetwxeen : " + (this.game.physics.arcade.angleBetween(this, this.game.player)));
+        if (this.currentSpeed < this.maxSpeed) this.currentSpeed += this.accelerationRate;
+        let angleToPlayer = this.game.physics.arcade.angleBetween(this, this.game.player) - this.worldRotation;
+
+        if (angleToPlayer > 0.10) {
+            if (angleToPlayer > 3.14) this.angle -= this.turnRate;
+            else this.angle += this.turnRate;
         }
-
-
+        else if (angleToPlayer < 0.10) {
+            if (angleToPlayer < -3.14) this.angle += this.turnRate;
+            else this.angle -= this.turnRate;
+        }
 
 
         //this.rotation = this.game.physics.arcade.angleToXY(this, this.game.player.x, this.game.player.y);
