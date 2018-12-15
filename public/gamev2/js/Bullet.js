@@ -9,7 +9,7 @@ Bullet = function (game, parent, obj) {
     this.body.onOverlap.add(this.onOverlap, this);
     this.body.onCollide = new Phaser.Signal();
     this.body.onCollide.add(this.onCollide, this);
-    this.body.stopVelocityOnCollide = (!obj.penetrant || true);
+    this.body.stopVelocityOnCollide = !obj.penetrant;
     this.body.onMoveComplete = new Phaser.Signal()
     this.body.onMoveComplete.add(this.onMoveComplete, this);
 

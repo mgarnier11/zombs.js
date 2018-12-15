@@ -58,7 +58,7 @@ function create() {
     game.ennemies = game.add.group();
 
 
-    for (let i = 0; i < 4; i++) {
+    for (let i = 0; i < 1; i++) {
         ennemy = new Unit(game, 0, 200 * i, ennemyObj);
         game.ennemies.add(ennemy);
     }
@@ -128,14 +128,14 @@ var playerObj = {
             "action": "left",
             "turnRate": 4,
             "multiShot": 1,
-            "ammos": 20,
+            "ammos": 200,
             "bullet": {
                 "speed": 750,
                 "damage": 0,
                 "lifespan": 1000,
-                "sprite": "bullet1",
+                "sprite": "bullet0",
                 "hitAnimation": "explosion3",
-                "penetrant": false
+                "penetrant": true
             }
         }
     ]
