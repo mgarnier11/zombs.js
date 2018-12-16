@@ -3,7 +3,6 @@ Unit = function (game, x, y, obj) {
 
     this.game = game;
     this.game.physics.arcade.enable(this);
-    this.body.collideWorldBounds = true;
     this.anchor.setTo(0.5, 0.5);
 
     this.body.onCollide = new Phaser.Signal();
@@ -11,6 +10,7 @@ Unit = function (game, x, y, obj) {
 
     this.body.onOverlap = new Phaser.Signal();
     this.body.onOverlap.add(this.onOverlap, this);
+    this.body.collideWorldBounds = obj.playerControlled;
 
     this.obj = obj;
     this.health = obj.health;
@@ -110,6 +110,7 @@ Unit.prototype.onOverlap = function (thisUnit, otherUnit) {
 Unit.prototype.doDestroy = function () {
     this.pendingDestroy = true;
     playAnimation(this.game, this.world.x, this.world.y, this.destroyAnimation);
+    this.game.unitDestroyed(this)
 }
 
 Unit.prototype.damage = function (damage) {

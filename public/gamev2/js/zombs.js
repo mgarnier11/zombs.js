@@ -1,10 +1,10 @@
 /// <reference path="typings/phaser.d.ts" />
 
 var gameWidth = 800;
-var gameHeight = 800;
+var gameHeight = 1000;
 
 
-var game = new Phaser.Game(gameWidth, gameHeight, Phaser.AUTO, 'zombs', { preload: preload, create: create, update: update, render: render });
+var game = new Game(gameWidth, gameHeight, Phaser.AUTO, 'zombs', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
     game.load.path = 'gamev1/';
@@ -42,26 +42,27 @@ function preload() {
 }
 
 function create() {
-    game.world.setBounds(0, 0, game.width, game.height);
+    game.world.setBounds(0, 0, game.width, game.height - 200);
 
-    game.land = game.add.tileSprite(0, 0, game.width, game.height, 'earth');
+    game.land = game.add.tileSprite(0, 0, game.width, game.height - 200, 'earth');
     game.land.fixedToCamera = true;
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.cursors = game.input.keyboard.createCursorKeys();
 
-
-
-    player = new Unit(game, 800, 400, playerObj);
+    player = new Unit(game, 400, 400, playerObj);
     game.add.existing(player);
     game.ennemies = game.add.group();
 
+    game.start(1);
 
-    for (let i = 0; i < 1; i++) {
-        ennemy = new Unit(game, 0, 200 * i, ennemyObj);
-        game.ennemies.add(ennemy);
-    }
+    /*
+        for (let i = 0; i < 1; i++) {
+            ennemy = new Unit(game, 0, 200 * i, ennemyObj);
+            game.ennemies.add(ennemy);
+        }
+        */
     game.camera.follow(player);
 
 }
@@ -113,25 +114,24 @@ var playerObj = {
     "turnRate": 4,
     "destroyAnimation": "explosion1",
     "weapons": [
-        /*
         {
-            "damage": 1,
+            "damage": 5,
             "ranged": false,
-            "reload": 500,
-            "action": "auto"
-        },*/
-        {
-            "damage": 1,
-            "ranged": true,
             "reload": 100,
+            "action": "auto"
+        },
+        {
+            "damage": 20,
+            "ranged": true,
+            "reload": 200,
             "sprite": "turret0",
             "action": "left",
             "turnRate": 4,
-            "multiShot": 1,
+            "multiShot": 3,
             "ammos": 200,
             "bullet": {
                 "speed": 750,
-                "damage": 0,
+                "damage": 20,
                 "lifespan": 1000,
                 "sprite": "bullet0",
                 "hitAnimation": "explosion3",
@@ -141,34 +141,113 @@ var playerObj = {
     ]
 };
 
-
-var ennemyObj = {
-    "health": 100,
-    "sprite": "tank0",
-    "playerControlled": false,
-    "maxSpeed": 200,
-    "accelerationRate": 5,
-    "decelerationRate": 5,
-    "turnRate": 4,
-    "destroyAnimation": "explosion1",
-    "weapons": [
-        {
-            "damage": 1,
-            "ranged": true,
-            "reload": 750,
-            "sprite": "turret0",
-            "action": "auto",
-            "turnRate": 4,
-            "multiShot": 1,
-            "ammos": 20,
-            "bullet": {
-                "speed": 750,
-                "damage": 0,
-                "lifespan": 1000,
-                "sprite": "bullet1",
-                "hitAnimation": "explosion3",
-                "penetrant": false
+var ennemies = [
+    {
+        "health": 100,
+        "sprite": "tank0",
+        "playerControlled": false,
+        "maxSpeed": 100,
+        "accelerationRate": 5,
+        "decelerationRate": 5,
+        "turnRate": 1,
+        "destroyAnimation": "explosion1",
+        "weapons": [
+            {
+                "damage": 15,
+                "ranged": true,
+                "reload": 1250,
+                "sprite": "turret0",
+                "action": "auto",
+                "turnRate": 4,
+                "multiShot": 1,
+                "ammos": 20,
+                "bullet": {
+                    "speed": 750,
+                    "damage": 0,
+                    "lifespan": 1000,
+                    "sprite": "bullet2",
+                    "hitAnimation": "explosion2",
+                    "penetrant": false
+                }
             }
-        }
-    ]
-};
+        ]
+    },
+    {
+        "health": 20,
+        "sprite": "tank0",
+        "playerControlled": false,
+        "maxSpeed": 400,
+        "accelerationRate": 5,
+        "decelerationRate": 5,
+        "turnRate": 4,
+        "destroyAnimation": "explosion1",
+        "weapons": [
+            {
+                "damage": 5,
+                "ranged": false,
+                "reload": 250,
+                "sprite": "turret0",
+            }
+        ]
+    },
+    {
+        "health": 50,
+        "sprite": "tank0",
+        "playerControlled": false,
+        "maxSpeed": 200,
+        "accelerationRate": 5,
+        "decelerationRate": 5,
+        "turnRate": 4,
+        "destroyAnimation": "explosion1",
+        "weapons": [
+            {
+                "damage": 1,
+                "ranged": true,
+                "reload": 250,
+                "sprite": "turret0",
+                "action": "auto",
+                "turnRate": 4,
+                "multiShot": 1,
+                "ammos": 20,
+                "bullet": {
+                    "speed": 750,
+                    "damage": 0,
+                    "lifespan": 1000,
+                    "sprite": "bullet3",
+                    "hitAnimation": "explosion3",
+                    "penetrant": false
+                }
+            }
+        ]
+    },
+    {
+        "health": 20,
+        "sprite": "tank0",
+        "playerControlled": false,
+        "maxSpeed": 200,
+        "accelerationRate": 5,
+        "decelerationRate": 5,
+        "turnRate": 4,
+        "destroyAnimation": "explosion1",
+        "weapons": [
+            {
+                "damage": 5,
+                "ranged": true,
+                "reload": 500,
+                "sprite": "turret0",
+                "action": "auto",
+                "turnRate": 4,
+                "multiShot": 1,
+                "ammos": 20,
+                "bullet": {
+                    "speed": 750,
+                    "damage": 0,
+                    "lifespan": 1000,
+                    "sprite": "bullet0",
+                    "hitAnimation": "explosion0",
+                    "penetrant": false
+                }
+            }
+        ]
+    }
+];

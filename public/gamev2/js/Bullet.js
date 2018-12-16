@@ -4,6 +4,8 @@ Bullet = function (game, parent, obj) {
     this.game = game;
     this.game.physics.arcade.enable(this);
     this.anchor.setTo(0.5, 0.5);
+    this.outOfBoundsKill = true;
+    this.checkWorldBounds = true;
 
     this.body.onOverlap = new Phaser.Signal();
     this.body.onOverlap.add(this.onOverlap, this);
