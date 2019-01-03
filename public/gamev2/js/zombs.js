@@ -1,15 +1,27 @@
 /// <reference path="typings/phaser.d.ts" />
 
-var gameWidth = 800;
-var gameHeight = 1000;
+var gameWidth = 600;
+var gameHeight = 600;
+var worldWidth = 2000;
+var worldHeight = 2000;
 
 
-var game = new Game(gameWidth, gameHeight, Phaser.AUTO, 'zombs', { preload: preload, create: create, update: update, render: render });
+var game = new Game(gameWidth, gameHeight, worldWidth, worldHeight, Phaser.AUTO, 'zombs', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
     game.load.path = 'gamev1/';
 
+    game.load.image('undf', 'assets/null.png');
+
     game.load.image('earth', 'assets/scorched_earth.png');
+    game.load.image('sky', 'assets/starfield.jpg');
+
+    game.load.image('hud0', 'assets/hud0.png');
+    game.load.image('hud1', 'assets/hud1.png');
+
+
+    game.load.image('minimap0', 'assets/minimap0.png');
+
     game.load.image('turret0', 'assets/turret0.png');
     game.load.image('turret1', 'assets/turret1.png');
 
@@ -18,6 +30,14 @@ function preload() {
     game.load.image('bullet1', 'assets/bullet1.png');
     game.load.image('bullet2', 'assets/bullet2.png');
     game.load.image('bullet3', 'assets/bullet3.png');
+
+
+    game.load.image('ship1', 'assets/cruiser1.png');
+    game.load.image('ship2', 'assets/enemyBlack1.png');
+    game.load.image('ship3', 'assets/enemyBlack2.png');
+    game.load.image('ship4', 'assets/enemyBlack3.png');
+    game.load.image('ship5', 'assets/enemyBlack4.png');
+    game.load.image('ship6', 'assets/enemyBlack5.png');
 
 
     game.load.spritesheet('explosion0', 'assets/exp0.png', 64, 64, 16);
@@ -35,25 +55,34 @@ function preload() {
     game.load.spritesheet('zombie0', 'assets/zombie0.png', 288, 311);
     game.load.image('tank0', 'assets/tank0.png');
 
-
     game.canvas.oncontextmenu = function (e) { e.preventDefault(); }
 
 
 }
 
 function create() {
-    game.world.setBounds(0, 0, game.width, game.height - 200);
+    game.world.setBounds(0, 0, worldWidth, worldHeight);
 
-    game.land = game.add.tileSprite(0, 0, game.width, game.height - 200, 'earth');
+    game.land = game.add.tileSprite(0, 0, game.width, game.height, 'sky');
     game.land.fixedToCamera = true;
 
     game.physics.startSystem(Phaser.Physics.ARCADE);
 
     game.cursors = game.input.keyboard.createCursorKeys();
 
-    player = new Unit(game, 400, 400, playerObj);
+    player = new Unit(game, 100, 100, playerObjv2);
     game.add.existing(player);
+
     game.ennemies = game.add.group();
+
+
+    game.hud = new Hud(game, 0, 0, player);
+    game.hud.fixedToCamera = true;
+    game.add.existing(game.hud);
+
+
+    game.hud.minimap.addChild(player.minimapPoint);
+
 
     game.start(1);
 
@@ -64,6 +93,8 @@ function create() {
         }
         */
     game.camera.follow(player);
+
+
 
 }
 
@@ -78,9 +109,22 @@ function update() {
 
     })
 
+
+    if (!game.camera.atLimit.x) {
+        game.land.tilePosition.x -= (player.body.velocity.x * game.time.physicsElapsed);
+    }
+
+    if (!game.camera.atLimit.y) {
+        game.land.tilePosition.y -= (player.body.velocity.y * game.time.physicsElapsed);
+    }
+
 }
 
 function render() {
+    //game.debug.body(player);
+    //game.debug.pointer(this.input.activePointer);
+
+
 
 }
 
@@ -106,7 +150,7 @@ function playAnimation(game, x, y, sprite) {
 
 var playerObj = {
     "health": 100,
-    "sprite": "tank0",
+    "sprite": "ship1",
     "playerControlled": true,
     "maxSpeed": 400,
     "accelerationRate": 5,
@@ -115,20 +159,20 @@ var playerObj = {
     "destroyAnimation": "explosion1",
     "weapons": [
         {
-            "damage": 5,
+            "damage": 100,
             "ranged": false,
             "reload": 100,
             "action": "auto"
         },
         {
-            "damage": 20,
             "ranged": true,
             "reload": 200,
-            "sprite": "turret0",
+            "sprite": "turret1",
             "action": "left",
             "turnRate": 4,
             "multiShot": 3,
             "ammos": 200,
+            "rotative": true,
             "bullet": {
                 "speed": 750,
                 "damage": 20,
@@ -141,10 +185,45 @@ var playerObj = {
     ]
 };
 
+
+
+var playerObjv2 = {
+    "health": 100,
+    "sprite": "ship2",
+    "playerControlled": true,
+    "maxSpeed": 800,
+    "accelerationRate": 10,
+    "decelerationRate": 5,
+    "turnRate": 8,
+    "destroyAnimation": "explosion1",
+    "weapons": [
+        {
+            "damage": 100,
+            "ranged": false,
+            "reload": 100,
+            "action": "auto"
+        },
+        {
+            "ranged": true,
+            "reload": 50,
+            "action": "left",
+            "ammos": 200,
+            "rotative": false,
+            "bullet": {
+                "damage": 50,
+                "speed": 1500,
+                "lifespan": 3000,
+                "sprite": "bullet0",
+                "hitAnimation": "explosion3",
+                "penetrant": true
+            }
+        }
+    ]
+};
 var ennemies = [
     {
         "health": 100,
-        "sprite": "tank0",
+        "sprite": "ship1",
         "playerControlled": false,
         "maxSpeed": 100,
         "accelerationRate": 5,
@@ -156,7 +235,6 @@ var ennemies = [
                 "damage": 15,
                 "ranged": true,
                 "reload": 1250,
-                "sprite": "turret0",
                 "action": "auto",
                 "turnRate": 4,
                 "multiShot": 1,
@@ -171,10 +249,10 @@ var ennemies = [
                 }
             }
         ]
-    },
+    },/*
     {
         "health": 20,
-        "sprite": "tank0",
+        "sprite": "ship2",
         "playerControlled": false,
         "maxSpeed": 400,
         "accelerationRate": 5,
@@ -192,7 +270,7 @@ var ennemies = [
     },
     {
         "health": 50,
-        "sprite": "tank0",
+        "sprite": "ship3",
         "playerControlled": false,
         "maxSpeed": 200,
         "accelerationRate": 5,
@@ -222,7 +300,7 @@ var ennemies = [
     },
     {
         "health": 20,
-        "sprite": "tank0",
+        "sprite": "ship4",
         "playerControlled": false,
         "maxSpeed": 200,
         "accelerationRate": 5,
@@ -249,5 +327,5 @@ var ennemies = [
                 }
             }
         ]
-    }
+    }*/
 ];

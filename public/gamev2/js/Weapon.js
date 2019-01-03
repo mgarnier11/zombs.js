@@ -1,5 +1,5 @@
 Weapon = function (game, parent, obj) {
-    Phaser.Sprite.call(this, game, obj.x, obj.y, obj.sprite);
+    Phaser.Sprite.call(this, game, obj.x, obj.y, (obj.sprite || 'undf'));
 
     this.game = game;
     this.anchor.setTo(0.3, 0.5);
@@ -10,6 +10,7 @@ Weapon = function (game, parent, obj) {
     this.ranged = (obj.ranged || false);
     this.action = (obj.action || 'auto');
     this.multiShot = (obj.multiShot || false);
+    this.rotative = (obj.rotative || false);
     this.unit = parent;
 
     this.bulletTime = 0;
@@ -29,6 +30,7 @@ Weapon = function (game, parent, obj) {
 Weapon.prototype = Object.create(Phaser.Sprite.prototype);
 Weapon.prototype.constructor = Weapon;
 Weapon.prototype.update = function () {
+
     if (this.unit.playerControlled) {
         /*
         let angleToPointer = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.x, this.game.input.activePointer.y) - this.worldRotation;
@@ -42,7 +44,11 @@ Weapon.prototype.update = function () {
             else this.angle -= this.turnRate;
         }
         */
-        this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.x, this.game.input.activePointer.y) - this.unit.rotation;
+        if (this.rotative) {
+            this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.worldX, this.game.input.activePointer.worldY) - this.unit.rotation;
+            //this.rotation = Phaser.Math.angleBetween(this.game.input.mousePointer.x, this.game.input.mousePointer.y, this.world.x, this.world.y) - this.unit.rotation + (Math.PI);
+            //turret.rotation = Phaser.Math.angleBetween(game.input.mousePointer.x, game.input.mousePointer.y, turret.x, turret.y) + (Math.PI);
+        }
 
         if (this.action == 'auto') {
             if (this.ranged) this.fire();
@@ -66,7 +72,10 @@ Weapon.prototype.update = function () {
             }
             */
 
-            this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.player.x, this.game.player.y) - this.unit.rotation;
+            if (this.rotative) {
+                this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.player.x, this.game.player.y) - this.unit.rotation;
+            }
+
 
             if (this.action == 'auto') {
                 if (this.ranged) this.fire();

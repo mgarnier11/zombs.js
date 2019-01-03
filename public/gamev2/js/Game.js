@@ -1,6 +1,9 @@
-Game = function (width = 800, height = 600, renderer = Phaser.Auto, parent = '', state = null, transparent = false, antialias = true, physicsConfig = null) {
+Game = function (width = 800, height = 600, worldWidth = 0, worldHeight = 0, renderer = Phaser.Auto, parent = '', state = null, transparent = false, antialias = true, physicsConfig = null) {
     Phaser.Game.call(this, width, height, renderer, parent, state, transparent, antialias, physicsConfig);
-    this.level = 0;
+    this.worldWidth = worldWidth;
+    this.worldHeight = worldHeight;
+
+    this.level = 1;
     this.score = 0;
 }
 
@@ -8,7 +11,7 @@ Game.prototype = Object.create(Phaser.Game.prototype);
 Game.prototype.constructor = Game;
 
 Game.prototype.start = function (level) {
-    this.level = (level | 0);
+    this.level = (level || 1);
     this.score = 0;
 
     this.nextLevel();
@@ -36,28 +39,11 @@ Game.prototype.unitDestroyed = function (unit) {
 Game.prototype.spawnEnnemies = function (nb) {
     console.log(nb + ' ennemies in this wave');
     for (let index = 0; index < nb; index++) {
-        var distBorder = intRnd(0, 400);
-        var distSide = intRnd(0, (this.height + this.width) / 2);
+        var x = intRnd(0, this.worldWidth);
+        var y = intRnd(0, this.worldHeight);
         var type = intRnd(0, ennemies.length - 1);
-        var ennemy;
-
-        //baseEnnemy.health = parseInt((this.level + 2) / 3);
-        //baseEnnemy.damage = parseInt((this.level + 2) / 3);
-
-        switch (intRnd(1, 4)) {
-            case 1:
-                ennemy = new Unit(this, -(distBorder), distSide, ennemies[type]);
-                break;
-            case 2:
-                ennemy = new Unit(this, distSide, -(distBorder), ennemies[type]);
-                break;
-            case 3:
-                ennemy = new Unit(this, this.width + distBorder, distSide, ennemies[type]);
-                break;
-            case 4:
-                ennemy = new Unit(this, distSide, this.height + distBorder, ennemies[type]);
-                break;
-        }
+        var ennemy = new Unit(this, x, y, ennemies[type]);
         this.ennemies.add(ennemy);
+        this.hud.minimap.addChild(ennemy.minimapPoint);
     }
 }
