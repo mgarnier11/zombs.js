@@ -13,18 +13,22 @@ Weapon = function (game, parent, obj) {
     this.rotative = (obj.rotative || false);
     this.unit = parent;
 
-    this.bulletTime = 0;
-    //this.game.add = new Phaser.Group(this.game, this, "bullets", false, true, Phaser.Physics.ARCADE);
-    this.bullets = this.game.add.group(undefined, "bulletsGroup", false, true, Phaser.Physics.ARCADE);
+    if (this.ranged) {
 
-    //this.addChild(this.bullets);
-    if (this.obj.bullet && this.obj.bullet.sprite) {
-        for (let index = 0; index < this.obj.ammos; index++) {
-            this.bullets.add(new Bullet(this.game, this, this.obj.bullet));
+        this.bulletTime = 0;
+        //this.game.add = new Phaser.Group(this.game, this, "bullets", false, true, Phaser.Physics.ARCADE);
+        this.bullets = this.game.add.group(undefined, "bulletsGroup", false, true, Phaser.Physics.ARCADE);
+
+        //this.addChild(this.bullets);
+        if (this.obj.bullet && this.obj.bullet.sprite) {
+            for (let index = 0; index < this.obj.ammos; index++) {
+                this.bullets.add(new Bullet(this.game, this, this.obj.bullet));
+            }
         }
-    }
 
-    this.unit.bullets = this.bullets;
+        this.unit.bullets.push(this.bullets);
+
+    }
 }
 
 Weapon.prototype = Object.create(Phaser.Sprite.prototype);

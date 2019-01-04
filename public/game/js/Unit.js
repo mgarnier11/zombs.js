@@ -16,6 +16,7 @@ Unit = function (game, x, y, obj) {
     this.turnRate = (obj.turnRate || 4);
     this.maxSpeed = (obj.maxSpeed || 400);
     this.destroyAnimation = (obj.destroyAnimation || "");
+    this.value = (obj.value || 1);
 
     this.body.onCollide = new Phaser.Signal();
     this.body.onCollide.add(this.onCollide, this);
@@ -35,7 +36,8 @@ Unit = function (game, x, y, obj) {
 
     //this.minimapPoint = new Phaser.Sprite(this.game, (this.x * 100) / this.game.worldWidth, (this.y * 100) / this.game.worldHeight, bmd);
 
-    this.weapons = this.game.add.group(this, "weaponsGroup", false, true, Phaser.Physics.ARCADE);
+    this.weapons = this.game.add.group(this, "weaponsGroup", false, false);
+    this.bullets = [];
     if (this.obj.weapons) {
         this.obj.weapons.forEach((weapon) => {
             this.weapons.add(new Weapon(this.game, this, weapon));
@@ -118,6 +120,9 @@ Unit.prototype.onOverlap = function (thisUnit, otherUnit) {
 Unit.prototype.doDestroy = function () {
     this.pendingDestroy = true;
     this.minimapPoint.pendingDestroy = true;
+    this.weapons.children.forEach(weapon => {
+        weapon.bullets.pendingDestroy = true;
+    })
     playAnimation(this.game, this.world.x, this.world.y, this.destroyAnimation);
     this.game.unitDestroyed(this)
 }

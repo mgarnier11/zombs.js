@@ -21,10 +21,10 @@ Bullet = function (game, parent, obj) {
     this.penetrant = (obj.penetrant || false);
     this.weapon = parent;
     this.lifeTime = (obj.lifespan || 1000);
+    this.z = (obj.z || 0);
     this.hitAnimation = obj.hitAnimation;
 
     this.overlapTime = 0;
-
 
     this.kill();
 }

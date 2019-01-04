@@ -1,7 +1,5 @@
-Minimap = function (game, x, y) {
-
-    Phaser.Sprite.call(this, game, x, y, 'minimap0');
-
+Minimap = function (game, x, y, sprite) {
+    Phaser.Sprite.call(this, game, x, y, sprite);
     this.game = game;
 }
 

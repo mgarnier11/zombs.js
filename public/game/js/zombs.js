@@ -5,11 +5,13 @@ var gameHeight = 600;
 var worldWidth = 2000;
 var worldHeight = 2000;
 
+var fps = true;
+
 
 var game = new Game(gameWidth, gameHeight, worldWidth, worldHeight, Phaser.AUTO, 'zombs', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
-    game.load.path = 'gamev1/';
+    game.load.path = 'game/';
 
     game.load.image('undf', 'assets/null.png');
 
@@ -61,71 +63,59 @@ function preload() {
 }
 
 function create() {
-    game.world.setBounds(0, 0, worldWidth, worldHeight);
+    game.init();
 
-    game.land = game.add.tileSprite(0, 0, game.width, game.height, 'sky');
-    game.land.fixedToCamera = true;
+    if (fps) game.time.advancedTiming = true;
 
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-
-    game.cursors = game.input.keyboard.createCursorKeys();
-
-    player = new Unit(game, 100, 100, playerObjv2);
-    game.add.existing(player);
-
-    game.ennemies = game.add.group();
+    game.player = new Unit(game, 100, 100, playerObj);
+    game.add.existing(game.player);
+    game.hud.minimap.addChild(game.player.minimapPoint);
 
 
-    game.hud = new Hud(game, 0, 0, player);
-    game.hud.fixedToCamera = true;
-    game.add.existing(game.hud);
-
-
-    game.hud.minimap.addChild(player.minimapPoint);
-
-
-    game.start(1);
-
-    /*
-        for (let i = 0; i < 1; i++) {
-            ennemy = new Unit(game, 0, 200 * i, ennemyObj);
-            game.ennemies.add(ennemy);
+    game.player.weapons.children.forEach(weapon => {
+        if (weapon.obj.bullet && weapon.obj.bullet.z >= 1) {
+            game.world.bringToTop(weapon.bullets);
         }
-        */
-    game.camera.follow(player);
+    })
 
+    game.start();
 
-
+    game.camera.follow(game.player);
 }
 
 function update() {
-    game.physics.arcade.collide(player, game.ennemies);
-    game.physics.arcade.collide(game.ennemies);
+    game.physics.arcade.collide(game.player, game.enemies);
+    game.physics.arcade.collide(game.enemies);
 
-    game.physics.arcade.overlap(player.bullets, game.ennemies);
-
-    game.ennemies.getAll().forEach((ennemy) => {
-        game.physics.arcade.overlap(player, ennemy.bullets);
-
+    game.player.bullets.forEach(bulletGroup => {
+        game.physics.arcade.overlap(bulletGroup, game.enemies);
     })
 
 
+    game.enemies.getAll().forEach((enemy) => {
+        enemy.bullets.forEach(enemyBulletGroup => {
+            game.physics.arcade.overlap(game.player, enemyBulletGroup);
+        })
+    })
+
+
+
+
     if (!game.camera.atLimit.x) {
-        game.land.tilePosition.x -= (player.body.velocity.x * game.time.physicsElapsed);
+        game.land.tilePosition.x -= (game.player.body.velocity.x * game.time.physicsElapsed);
     }
 
     if (!game.camera.atLimit.y) {
-        game.land.tilePosition.y -= (player.body.velocity.y * game.time.physicsElapsed);
+        game.land.tilePosition.y -= (game.player.body.velocity.y * game.time.physicsElapsed);
     }
 
 }
 
 function render() {
-    //game.debug.body(player);
+    if (fps) game.debug.text(game.time.fps, 2, 14, "#00ff00");
+
+    //game.debug.body(game.player);
     //game.debug.pointer(this.input.activePointer);
-
-
-
 }
 
 function intRnd(min, max) {
@@ -136,7 +126,7 @@ function intRnd(min, max) {
 
 function playAnimation(game, x, y, sprite) {
     if (sprite && game) {
-        let animSprite = game.add.sprite(x, y, sprite);
+        let animSprite = game.animations.add(new Phaser.Sprite(game, x, y, sprite))//.sprite(x, y, sprite);
         animSprite.anchor.setTo(0.5, 0.5)
         animSprite.animations.add('animation', null, 20, false);
 
@@ -169,23 +159,37 @@ var playerObj = {
             "reload": 200,
             "sprite": "turret1",
             "action": "left",
-            "turnRate": 4,
             "multiShot": 3,
             "ammos": 200,
             "rotative": true,
+            "x": 20,
+            "y": 0,
             "bullet": {
+                "z": 1,
                 "speed": 750,
                 "damage": 20,
                 "lifespan": 1000,
-                "sprite": "bullet0",
-                "hitAnimation": "explosion3",
+                "sprite": "bullet1",
+                "hitAnimation": "explosion0",
                 "penetrant": true
+            }
+        },
+        {
+            "ranged": true,
+            "reload": 50,
+            "action": "right",
+            "ammos": 200,
+            "bullet": {
+                "z": 0,
+                "speed": 1200,
+                "damage": 5,
+                "lifespan": 1000,
+                "sprite": "bullet0",
+                "hitAnimation": "explosion3"
             }
         }
     ]
 };
-
-
 
 var playerObjv2 = {
     "health": 100,
@@ -220,9 +224,10 @@ var playerObjv2 = {
         }
     ]
 };
-var ennemies = [
+
+var enemies = [
     {
-        "health": 100,
+        "health": 1000,
         "sprite": "ship1",
         "playerControlled": false,
         "maxSpeed": 100,
@@ -244,10 +249,10 @@ var ennemies = [
                     "damage": 0,
                     "lifespan": 1000,
                     "sprite": "bullet2",
-                    "hitAnimation": "explosion2",
+                    "hitAnimation": "explosion0",
                     "penetrant": false
                 }
-            }
+            },
         ]
     },/*
     {
