@@ -26,6 +26,15 @@ Game.prototype.init = function () {
     this.hud = new Hud(this, 0, 0);
     this.add.existing(this.hud);
 
+    this.menu = new Menu(this);
+    /*
+        this.menu.addEventListener('onClose', (menu) => {
+            this.nextLevel();
+        })
+    */
+    this.add.existing(this.menu);
+
+
     this.animations = this.add.group(undefined, 'animations');
 
     this.enemies = this.add.group(undefined, 'enemies');
@@ -55,7 +64,8 @@ Game.prototype.unitDestroyed = function (unit) {
     this.golds += unit.value;
     //this.scoreText.setText('Score : ' + this.score);
     if (this.enemies.children.length == 1) {
-        this.nextLevel();
+        this.menu.show();
+        //this.nextLevel();
     }
 }
 

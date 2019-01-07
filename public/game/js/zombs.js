@@ -26,6 +26,8 @@ function preload() {
 
     game.load.image('turret0', 'assets/turret0.png');
     game.load.image('turret1', 'assets/turret1.png');
+    game.load.image('turret2', 'assets/turret2.png');
+    game.load.image('turret3', 'assets/turret3.png');
 
 
     game.load.image('bullet0', 'assets/bullet0.png');
@@ -33,7 +35,7 @@ function preload() {
     game.load.image('bullet2', 'assets/bullet2.png');
     game.load.image('bullet3', 'assets/bullet3.png');
 
-
+    game.load.image('ship0', 'assets/ship0.png');
     game.load.image('ship1', 'assets/cruiser1.png');
     game.load.image('ship2', 'assets/enemyBlack1.png');
     game.load.image('ship3', 'assets/enemyBlack2.png');
@@ -140,7 +142,7 @@ function playAnimation(game, x, y, sprite) {
 
 var playerObj = {
     "health": 100,
-    "sprite": "ship1",
+    "sprite": "ship0",
     "playerControlled": true,
     "maxSpeed": 400,
     "accelerationRate": 5,
@@ -157,12 +159,12 @@ var playerObj = {
         {
             "ranged": true,
             "reload": 200,
-            "sprite": "turret1",
+            "sprite": "turret2",
             "action": "left",
             "multiShot": 3,
             "ammos": 200,
             "rotative": true,
-            "x": 20,
+            "x": 30,
             "y": 0,
             "bullet": {
                 "z": 1,
@@ -177,10 +179,32 @@ var playerObj = {
         {
             "ranged": true,
             "reload": 50,
+            "sprite": "turret3",
             "action": "right",
+            "rotative": true,
             "ammos": 200,
+            "x": -65,
+            "y": 40,
             "bullet": {
-                "z": 0,
+                "z": 1,
+                "speed": 1200,
+                "damage": 5,
+                "lifespan": 1000,
+                "sprite": "bullet0",
+                "hitAnimation": "explosion3"
+            }
+        },
+        {
+            "ranged": true,
+            "reload": 50,
+            "sprite": "turret3",
+            "action": "right",
+            "rotative": true,
+            "ammos": 200,
+            "x": -65,
+            "y": -40,
+            "bullet": {
+                "z": 1,
                 "speed": 1200,
                 "damage": 5,
                 "lifespan": 1000,

@@ -11,6 +11,7 @@ Weapon = function (game, parent, obj) {
     this.action = (obj.action || 'auto');
     this.multiShot = (obj.multiShot || false);
     this.rotative = (obj.rotative || false);
+    this.turnRate = (obj.turnRate || 4);
     this.unit = parent;
 
     if (this.ranged) {
@@ -36,22 +37,22 @@ Weapon.prototype.constructor = Weapon;
 Weapon.prototype.update = function () {
 
     if (this.unit.playerControlled) {
-        /*
-        let angleToPointer = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.x, this.game.input.activePointer.y) - this.worldRotation;
-
-        if (angleToPointer > 0.10) {
-            if (angleToPointer > 3.14) this.angle -= this.turnRate;
-            else this.angle += this.turnRate;
-        }
-        else if (angleToPointer < 0.10) {
-            if (angleToPointer < -3.14) this.angle += this.turnRate;
-            else this.angle -= this.turnRate;
-        }
-        */
         if (this.rotative) {
             this.rotation = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.worldX, this.game.input.activePointer.worldY) - this.unit.rotation;
             //this.rotation = Phaser.Math.angleBetween(this.game.input.mousePointer.x, this.game.input.mousePointer.y, this.world.x, this.world.y) - this.unit.rotation + (Math.PI);
             //turret.rotation = Phaser.Math.angleBetween(game.input.mousePointer.x, game.input.mousePointer.y, turret.x, turret.y) + (Math.PI);
+            /*
+            let angleToPointer = Phaser.Math.angleBetween(this.world.x, this.world.y, this.game.input.activePointer.x, this.game.input.activePointer.y) - this.unit.rotation;
+
+            if (angleToPointer > 0.10) {
+                if (angleToPointer > 3.14) this.angle -= this.turnRate;
+                else this.angle += this.turnRate;
+            }
+            else if (angleToPointer < 0.10) {
+                if (angleToPointer < -3.14) this.angle += this.turnRate;
+                else this.angle -= this.turnRate;
+            }
+                        */
         }
 
         if (this.action == 'auto') {
