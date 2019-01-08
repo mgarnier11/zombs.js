@@ -1,18 +1,20 @@
-Menu = function (game) {
+Menu = function (game, obj) {
     Phaser.Group.call(this, game, undefined, 'menu');
 
     this.fixedToCamera = true;
     this.game = game;
 
-    this.test = this.addChild(new Minimap(game, 100, 100, 'minimap0'));
-    this.test.inputEnabled = true;
+    let buttonObj = {
+        "text": "testButton",
+        "style": {
 
-    this.test.events.onInputDown.add(() => {
-        this.hide();
-    });
+        }
+    }
 
-    this.onOpen = new CustomEvent('onOpen');
-    this.onClose = new CustomEvent('onClose');
+    this.button = this.addChild(new Button(game, buttonObj));
+    this.button.onClick((e) => {
+        console.log(e);
+    })
 
     this.visible = false;
 
@@ -25,16 +27,21 @@ Menu.prototype.show = function () {
     console.log(this);
     this.game.paused = true;
     this.visible = true;
-    this.dispatchEvent(this.onOpen);
+    if (this.onOpenHandler) this.onOpenHandler(this, 'show');
+
 };
 
 Menu.prototype.hide = function () {
     this.game.paused = false;
     this.visible = false;
-    this.dispatchEvent(this.onClose);
+    if (this.onCloseHandler) this.onCloseHandler(this, 'hide');
 };
 
-Menu.prototype.onClick = function (e) {
-    console.log('click');
-    console.log(e);
+Menu.prototype.onClose = function (handler) {
+    this.onCloseHandler = handler;
 }
+
+Menu.prototype.onOpen = function (handler) {
+    this.onOpenHandler = handler;
+}
+

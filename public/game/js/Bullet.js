@@ -1,32 +1,51 @@
-Bullet = function (game, parent, obj) {
-    Phaser.Sprite.call(this, game, 0, 0, obj.sprite);
+Bullet = function (game, config, parent) {
+    this.setupConfiguration(config);
+
+    Phaser.Sprite.call(this, game, 0, 0, this.config.sprite);
+
+    this.weapon = parent;
+    this.z = this.config.z;
+    this.damage = this.config.damage;
+    this.lifeTime = this.config.lifespan;
+    this.bulletSpeed = this.config.speed;
+    this.penetrant = this.config.penetrant;
+    this.hitAnimation = this.config.hitAnimation;
 
     this.game = game;
     this.game.physics.arcade.enable(this);
     this.anchor.setTo(0.5, 0.5);
+
     this.outOfBoundsKill = true;
     this.checkWorldBounds = true;
 
     this.body.onOverlap = new Phaser.Signal();
     this.body.onOverlap.add(this.onOverlap, this);
+
     this.body.onCollide = new Phaser.Signal();
     this.body.onCollide.add(this.onCollide, this);
-    this.body.stopVelocityOnCollide = !obj.penetrant;
+
     this.body.onMoveComplete = new Phaser.Signal()
     this.body.onMoveComplete.add(this.onMoveComplete, this);
 
-    this.obj = obj;
-    this.damage = (obj.damage || 1);
-    this.bulletSpeed = (obj.speed || 1000);
-    this.penetrant = (obj.penetrant || false);
-    this.weapon = parent;
-    this.lifeTime = (obj.lifespan || 1000);
-    this.z = (obj.z || 0);
-    this.hitAnimation = obj.hitAnimation;
+    this.body.stopVelocityOnCollide = !this.config.penetrant;
 
     this.overlapTime = 0;
 
     this.kill();
+}
+
+Bullet.prototype.setupConfiguration = function (newConfig) {
+    this.defaultConfig = {
+        z: 0,
+        speed: 1000,
+        damage: 1,
+        lifespan: 1000,
+        sprite: defSprite,
+        hitAnimation: "",
+        penetrant: false
+    }
+
+    this.config = mergeObjects(this.defaultConfig, newConfig);
 }
 
 Bullet.prototype = Object.create(Phaser.Sprite.prototype);

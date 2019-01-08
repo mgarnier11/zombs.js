@@ -1,10 +1,67 @@
-/// <reference path="typings/phaser.d.ts" />
+var textBaseStyle = {
+    font: "18px Arial",
+    fill: "#FFFFFF",
+    align: 'center',
+    boundsAlignH: 'center'
+}
 
-var gameWidth = 600;
-var gameHeight = 600;
-var worldWidth = 2000;
-var worldHeight = 2000;
+var gameObj = {
+    width: 600,
+    height: 600,
+    worldWidth: 2000,
+    worldHeight: 2000,
+    level: 0,
+    score: 0,
+    golds: 0,
+    hud: {
+        x: 0,
+        y: 0,
+        minimap: {
+            x: 500,
+            y: 500,
+            style: {
+                width: 100,
+                height: 100,
+                color: "#000000",
+                alliesColor: "#00FF00",
+                enemiesColor: "#FF0000"
+            }
+        },
+        texts: [
+            {
+                x: 500,
+                y: 0,
+                text: "score",
+                style: textBaseStyle
+            },
+            {
+                x: 500,
+                y: 18,
+                text: "gold",
+                style: textBaseStyle
+            },
+            {
+                x: 500,
+                y: 36,
+                text: "level",
+                style: textBaseStyle
+            },
+        ]
 
+    },
+    menu: [
+
+    ],
+    player: {
+
+    },
+    enemies: [
+
+    ]
+}
+
+
+var defSprite = "undf";
 var fps = true;
 
 
@@ -120,6 +177,9 @@ function render() {
     //game.debug.pointer(this.input.activePointer);
 }
 
+
+
+
 function intRnd(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
@@ -140,221 +200,13 @@ function playAnimation(game, x, y, sprite) {
     }
 }
 
-var playerObj = {
-    "health": 100,
-    "sprite": "ship0",
-    "playerControlled": true,
-    "maxSpeed": 400,
-    "accelerationRate": 5,
-    "decelerationRate": 5,
-    "turnRate": 4,
-    "destroyAnimation": "explosion1",
-    "weapons": [
-        {
-            "damage": 100,
-            "ranged": false,
-            "reload": 100,
-            "action": "auto"
-        },
-        {
-            "ranged": true,
-            "reload": 200,
-            "sprite": "turret2",
-            "action": "left",
-            "multiShot": 3,
-            "ammos": 200,
-            "rotative": true,
-            "x": 30,
-            "y": 0,
-            "bullet": {
-                "z": 1,
-                "speed": 750,
-                "damage": 20,
-                "lifespan": 1000,
-                "sprite": "bullet1",
-                "hitAnimation": "explosion0",
-                "penetrant": true
-            }
-        },
-        {
-            "ranged": true,
-            "reload": 50,
-            "sprite": "turret3",
-            "action": "right",
-            "rotative": true,
-            "ammos": 200,
-            "x": -65,
-            "y": 40,
-            "bullet": {
-                "z": 1,
-                "speed": 1200,
-                "damage": 5,
-                "lifespan": 1000,
-                "sprite": "bullet0",
-                "hitAnimation": "explosion3"
-            }
-        },
-        {
-            "ranged": true,
-            "reload": 50,
-            "sprite": "turret3",
-            "action": "right",
-            "rotative": true,
-            "ammos": 200,
-            "x": -65,
-            "y": -40,
-            "bullet": {
-                "z": 1,
-                "speed": 1200,
-                "damage": 5,
-                "lifespan": 1000,
-                "sprite": "bullet0",
-                "hitAnimation": "explosion3"
-            }
+function mergeObjetcs(targetObj, newObj) {
+    for (var p in newObj) {
+        try {
+            targetObj[p] = newObj[p].constructor == Object ? mergeObjetcs(targetObj[p], newObj[p]) : newObj[p];
+        } catch (e) {
+            targetObj[p] = newObj[p];
         }
-    ]
-};
-
-var playerObjv2 = {
-    "health": 100,
-    "sprite": "ship2",
-    "playerControlled": true,
-    "maxSpeed": 800,
-    "accelerationRate": 10,
-    "decelerationRate": 5,
-    "turnRate": 8,
-    "destroyAnimation": "explosion1",
-    "weapons": [
-        {
-            "damage": 100,
-            "ranged": false,
-            "reload": 100,
-            "action": "auto"
-        },
-        {
-            "ranged": true,
-            "reload": 50,
-            "action": "left",
-            "ammos": 200,
-            "rotative": false,
-            "bullet": {
-                "damage": 50,
-                "speed": 1500,
-                "lifespan": 3000,
-                "sprite": "bullet0",
-                "hitAnimation": "explosion3",
-                "penetrant": true
-            }
-        }
-    ]
-};
-
-var enemies = [
-    {
-        "health": 1000,
-        "sprite": "ship1",
-        "playerControlled": false,
-        "maxSpeed": 100,
-        "accelerationRate": 5,
-        "decelerationRate": 5,
-        "turnRate": 1,
-        "destroyAnimation": "explosion1",
-        "weapons": [
-            {
-                "damage": 15,
-                "ranged": true,
-                "reload": 1250,
-                "action": "auto",
-                "turnRate": 4,
-                "multiShot": 1,
-                "ammos": 20,
-                "bullet": {
-                    "speed": 750,
-                    "damage": 0,
-                    "lifespan": 1000,
-                    "sprite": "bullet2",
-                    "hitAnimation": "explosion0",
-                    "penetrant": false
-                }
-            },
-        ]
-    },/*
-    {
-        "health": 20,
-        "sprite": "ship2",
-        "playerControlled": false,
-        "maxSpeed": 400,
-        "accelerationRate": 5,
-        "decelerationRate": 5,
-        "turnRate": 4,
-        "destroyAnimation": "explosion1",
-        "weapons": [
-            {
-                "damage": 5,
-                "ranged": false,
-                "reload": 250,
-                "sprite": "turret0",
-            }
-        ]
-    },
-    {
-        "health": 50,
-        "sprite": "ship3",
-        "playerControlled": false,
-        "maxSpeed": 200,
-        "accelerationRate": 5,
-        "decelerationRate": 5,
-        "turnRate": 4,
-        "destroyAnimation": "explosion1",
-        "weapons": [
-            {
-                "damage": 1,
-                "ranged": true,
-                "reload": 250,
-                "sprite": "turret0",
-                "action": "auto",
-                "turnRate": 4,
-                "multiShot": 1,
-                "ammos": 20,
-                "bullet": {
-                    "speed": 750,
-                    "damage": 0,
-                    "lifespan": 1000,
-                    "sprite": "bullet3",
-                    "hitAnimation": "explosion3",
-                    "penetrant": false
-                }
-            }
-        ]
-    },
-    {
-        "health": 20,
-        "sprite": "ship4",
-        "playerControlled": false,
-        "maxSpeed": 200,
-        "accelerationRate": 5,
-        "decelerationRate": 5,
-        "turnRate": 4,
-        "destroyAnimation": "explosion1",
-        "weapons": [
-            {
-                "damage": 5,
-                "ranged": true,
-                "reload": 500,
-                "sprite": "turret0",
-                "action": "auto",
-                "turnRate": 4,
-                "multiShot": 1,
-                "ammos": 20,
-                "bullet": {
-                    "speed": 750,
-                    "damage": 0,
-                    "lifespan": 1000,
-                    "sprite": "bullet0",
-                    "hitAnimation": "explosion0",
-                    "penetrant": false
-                }
-            }
-        ]
-    }*/
-];
+    }
+    return targetObj;
+}

@@ -1,22 +1,21 @@
-Unit = function (game, x, y, obj) {
-    Phaser.Sprite.call(this, game, x, y, obj.sprite);
+Unit = function (game, config) {
+    this.setupConfiguration(config);
+
+    Phaser.Sprite.call(this, game, this.config.x, this.config.y, this.config.sprite);
+
+    this.value = this.config.value;
+    this.health = this.config.health;
+    this.maxHealth = this.config.health;
+    this.turnRate = this.config.turnRate;
+    this.maxSpeed = this.config.maxSpeed;
+    this.destroyAnimation = this.config.destroyAnimation;
+    this.playerControlled = this.config.playerControlled;
+    this.accelerationRate = this.config.accelerationRate;
+    this.decelerationRate = this.config.decelerationRate;
 
     this.game = game;
     this.game.physics.arcade.enable(this);
     this.anchor.setTo(0.5, 0.5);
-
-
-
-    this.obj = obj;
-    this.health = (obj.health || 5);
-    this.maxHealth = this.health;
-    this.playerControlled = (obj.playerControlled || false);
-    this.accelerationRate = (obj.accelerationRate || 4);
-    this.decelerationRate = (obj.decelerationRate || 4);
-    this.turnRate = (obj.turnRate || 4);
-    this.maxSpeed = (obj.maxSpeed || 400);
-    this.destroyAnimation = (obj.destroyAnimation || "");
-    this.value = (obj.value || 1);
 
     this.body.onCollide = new Phaser.Signal();
     this.body.onCollide.add(this.onCollide, this);
@@ -24,28 +23,45 @@ Unit = function (game, x, y, obj) {
     this.body.onOverlap = new Phaser.Signal();
     this.body.onOverlap.add(this.onOverlap, this);
 
-    this.body.collideWorldBounds = this.playerControlled;
+    this.body.collideWorldBounds = this.config.playerControlled;
 
     this.currentSpeed = 0;
     this.collideTime = 0;
 
-    this.healthBar = this.addChild(new HealthBar(this.game, this.obj.healthBar));
-    this.minimapPoint = new MinimapPoint(this.game, this);
+    this.healthBar = this.addChild(new HealthBar(this.game, this.config.healthBar));
 
-
-
-    //this.minimapPoint = new Phaser.Sprite(this.game, (this.x * 100) / this.game.worldWidth, (this.y * 100) / this.game.worldHeight, bmd);
+    this.minimapPoint = new MinimapPoint(this.game, this.config.minimapPoint, this);
 
     this.weapons = this.game.add.group(this, "weaponsGroup", false, false);
+
     this.bullets = [];
-    if (this.obj.weapons) {
-        this.obj.weapons.forEach((weapon) => {
-            this.weapons.add(new Weapon(this.game, this, weapon));
+    if (this.config.weapons) {
+        this.config.weapons.forEach((weapon) => {
+            this.weapons.add(new Weapon(this.game, weapon, this));
         });
     }
 
-    if (this.playerControlled) this.game.player = this;
+    if (this.config.playerControlled) this.game.player = this;
 }
+
+Unit.prototype.setupConfiguration = function (newConfig) {
+    this.defaultConfig = {
+        x: 0,
+        y: 0,
+        sprite: defSprite,
+        value: 1,
+        health: 10,
+        turnRate: 4,
+        maxSpeed: 400,
+        destroyAnimation: "",
+        playerControlled: false,
+        accelerationRate: 4,
+        decelerationRate: 4
+    }
+
+    this.config = mergeObjects(this.defaultConfig, newConfig);
+}
+
 
 Unit.prototype = Object.create(Phaser.Sprite.prototype);
 Unit.prototype.constructor = Unit;
@@ -117,14 +133,18 @@ Unit.prototype.onOverlap = function (thisUnit, otherUnit) {
 
 }
 
+Unit.prototype.onDestroy = function (handler) {
+    this.onDestroyHandler = handler;
+}
+
 Unit.prototype.doDestroy = function () {
+    this.onDestroyHandler(this);
     this.pendingDestroy = true;
     this.minimapPoint.pendingDestroy = true;
     this.weapons.children.forEach(weapon => {
         weapon.bullets.pendingDestroy = true;
     })
     playAnimation(this.game, this.world.x, this.world.y, this.destroyAnimation);
-    this.game.unitDestroyed(this)
 }
 
 Unit.prototype.damage = function (damage) {

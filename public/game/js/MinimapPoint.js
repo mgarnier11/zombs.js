@@ -1,30 +1,50 @@
-MinimapPoint = function (game, unit) {
-    this.unit = unit;
+MinimapPoint = function (game, config, unit) {
+    this.setupConfiguration(config);
+
+    this.color = this.config.color;
+    this.width = this.config.width;
+    this.height = this.config.height;
+
     this.game = game;
+    this.unit = unit;
+    this.minimap = this.game.hud.minimap;
 
-    let color = (unit.playerControlled ? '#00FF00' : '#FF0000');
+    //Phaser.Sprite.call(this, game, (unit.x * 95) / game.worldWidth, (unit.y * 95) / game.worldHeight, this.getBmd(game, color, { x: 5, y: 5 }));
+    Phaser.Sprite.call(this, game, 0, 0, this.getBmd());
 
-    Phaser.Sprite.call(this, game, (unit.x * 95) / game.worldWidth, (unit.y * 95) / game.worldHeight, this.getBmd(game, color, { x: 5, y: 5 }));
+    if (this.minimap) this.minimap.addChild(this);
+    else this.kill();
 
-    this.game.hud.minimap.addChild(this);
+}
+
+MinimapPoint.prototype.setupConfiguration = function (newConfig) {
+    this.defaultConfig = {
+        height: 5,
+        width: 5,
+        color: "#FF0000"
+    }
+
+    this.config = mergeObjects(this.defaultConfig, newConfig);
 }
 
 MinimapPoint.prototype = Object.create(Phaser.Sprite.prototype);
 MinimapPoint.prototype.constructor = MinimapPoint;
 
 MinimapPoint.prototype.update = function () {
-    let newX = (this.unit.x * 95) / this.game.worldWidth;
-    this.x = (newX < 0 ? 0 : (newX > 95) ? 95 : newX);
+    let maxWidth = (this.minimap.width - this.width);
+    let newX = (this.unit.x * maxWidth) / this.game.worldWidth;
+    this.x = (newX < 0 ? 0 : (newX > maxWidth) ? maxWidth : newX);
 
-    let newY = (this.unit.y * 95) / this.game.worldHeight;
-    this.y = (newY < 0 ? 0 : (newY > 95) ? 95 : newY);
+    let maxHeight = (this.minimap.height - this.height);
+    let newY = (this.unit.y * maxHeight) / this.game.worldHeight;
+    this.y = (newY < 0 ? 0 : (newY > maxHeight) ? maxHeight : newY);
 };
 
-MinimapPoint.prototype.getBmd = function (game, color, size) {
-    let bmd = new Phaser.BitmapData(game, 'minimapPoint', (size.x || 5), (size.y || 5));
-    bmd.ctx.fillStyle = color;
+MinimapPoint.prototype.getBmd = function () {
+    let bmd = new Phaser.BitmapData(this.game, 'minimapPoint', this.width, this.height);
+    bmd.ctx.fillStyle = this.color;
     bmd.ctx.beginPath();
-    bmd.ctx.rect(0, 0, (size.x || 5), (size.y || 5));
+    bmd.ctx.rect(0, 0, this.width, this.height);
     bmd.ctx.fill();
     return bmd;
 }

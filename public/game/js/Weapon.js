@@ -1,36 +1,52 @@
-Weapon = function (game, parent, obj) {
-    Phaser.Sprite.call(this, game, obj.x, obj.y, (obj.sprite || 'undf'));
+Weapon = function (game, config, parent) {
+    this.setupConfiguration(config);
+
+    Phaser.Sprite.call(this, game, this.config.x, this.config.y, this.config.spite);
+
+    this.unit = parent;
+    this.reload = this.config.reload;
+    this.damage = this.config.damage;
+    this.ranged = this.config.ranged;
+    this.action = this.config.action;
+    this.rotative = this.config.rotative;
+    this.turnRate = this.config.turnRate;
+    this.multiShot = this.config.multiShot;
 
     this.game = game;
     this.anchor.setTo(0.3, 0.5);
 
-    this.obj = obj;
-    this.reload = (obj.reload || 500);
-    this.damage = (obj.damage || 1);
-    this.ranged = (obj.ranged || false);
-    this.action = (obj.action || 'auto');
-    this.multiShot = (obj.multiShot || false);
-    this.rotative = (obj.rotative || false);
-    this.turnRate = (obj.turnRate || 4);
-    this.unit = parent;
-
     if (this.ranged) {
-
         this.bulletTime = 0;
-        //this.game.add = new Phaser.Group(this.game, this, "bullets", false, true, Phaser.Physics.ARCADE);
+
         this.bullets = this.game.add.group(undefined, "bulletsGroup", false, true, Phaser.Physics.ARCADE);
 
-        //this.addChild(this.bullets);
-        if (this.obj.bullet && this.obj.bullet.sprite) {
-            for (let index = 0; index < this.obj.ammos; index++) {
-                this.bullets.add(new Bullet(this.game, this, this.obj.bullet));
+        if (this.config.bullet && this.config.bullet.sprite) {
+            for (let index = 0; index < this.config.ammos; index++) {
+                this.bullets.add(new Bullet(this.game, this.config.bullet, this));
             }
         }
-
         this.unit.bullets.push(this.bullets);
-
     }
 }
+
+Weapon.prototype.setupConfiguration = function (newConfig) {
+    this.defaultConfig = {
+        x: 0,
+        y: 0,
+        damage: 1,
+        reload: 500,
+        sprite: defSprite,
+        turnRate: 4,
+        rotative: false,
+        ranged: false,
+        multishot: 1,
+        ammos: 10,
+        action: "auto"
+    }
+
+    this.config = mergeObjects(this.defaultConfig, newConfig);
+}
+
 
 Weapon.prototype = Object.create(Phaser.Sprite.prototype);
 Weapon.prototype.constructor = Weapon;
