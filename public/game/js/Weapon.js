@@ -1,16 +1,16 @@
 Weapon = function (game, config, parent) {
     this.setupConfiguration(config);
 
-    Phaser.Sprite.call(this, game, this.config.x, this.config.y, this.config.spite);
+    Phaser.Sprite.call(this, game, this.myConfig.x, this.myConfig.y, this.myConfig.sprite);
 
     this.unit = parent;
-    this.reload = this.config.reload;
-    this.damage = this.config.damage;
-    this.ranged = this.config.ranged;
-    this.action = this.config.action;
-    this.rotative = this.config.rotative;
-    this.turnRate = this.config.turnRate;
-    this.multiShot = this.config.multiShot;
+    this.reload = this.myConfig.reload;
+    this.damage = this.myConfig.damage;
+    this.ranged = this.myConfig.ranged;
+    this.action = this.myConfig.action;
+    this.rotative = this.myConfig.rotative;
+    this.turnRate = this.myConfig.turnRate;
+    this.multiShot = this.myConfig.multiShot;
 
     this.game = game;
     this.anchor.setTo(0.3, 0.5);
@@ -20,14 +20,17 @@ Weapon = function (game, config, parent) {
 
         this.bullets = this.game.add.group(undefined, "bulletsGroup", false, true, Phaser.Physics.ARCADE);
 
-        if (this.config.bullet && this.config.bullet.sprite) {
-            for (let index = 0; index < this.config.ammos; index++) {
-                this.bullets.add(new Bullet(this.game, this.config.bullet, this));
+        if (this.myConfig.bullet && this.myConfig.bullet.sprite) {
+            for (let index = 0; index < this.myConfig.ammos; index++) {
+                this.bullets.add(new Bullet(this.game, this.myConfig.bullet, this));
             }
         }
         this.unit.bullets.push(this.bullets);
     }
 }
+
+Weapon.prototype = Object.create(Phaser.Sprite.prototype);
+Weapon.prototype.constructor = Weapon;
 
 Weapon.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
@@ -44,12 +47,9 @@ Weapon.prototype.setupConfiguration = function (newConfig) {
         action: "auto"
     }
 
-    this.config = mergeObjects(this.defaultConfig, newConfig);
+    this.myConfig = mergeObjects(this.defaultConfig, newConfig);
 }
 
-
-Weapon.prototype = Object.create(Phaser.Sprite.prototype);
-Weapon.prototype.constructor = Weapon;
 Weapon.prototype.update = function () {
 
     if (this.unit.playerControlled) {

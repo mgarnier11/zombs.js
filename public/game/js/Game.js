@@ -1,12 +1,18 @@
-Game = function (config) {
+var Game = function (config, parent, state) {
     this.setupConfiguration(config);
 
-    Phaser.Game.call(this, this.config.width, this.config.height);
 
-    this.level = this.config.level;
-    this.score = this.config.score;
-    this.golds = this.config.golds;
+    Phaser.Game.call(this, this.myConfig.width, this.myConfig.height, Phaser.AUTO, parent, state);
+
+    this.level = this.myConfig.level;
+    this.score = this.myConfig.score;
+    this.golds = this.myConfig.golds;
+    this.worldWidth = this.myConfig.worldWidth;
+    this.worldHeight = this.myConfig.worldHeight;
 }
+
+Game.prototype = Object.create(Phaser.Game.prototype);
+Game.prototype.constructor = Game;
 
 Game.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
@@ -19,15 +25,12 @@ Game.prototype.setupConfiguration = function (newConfig) {
         golds: 0
     }
 
-    this.config = mergeObjects(this.defaultConfig, newConfig);
+    this.myConfig = mergeObjects(this.defaultConfig, newConfig);
 }
-
-Game.prototype = Object.create(Phaser.Game.prototype);
-Game.prototype.constructor = Game;
 
 Game.prototype.init = function () {
 
-    this.world.setBounds(0, 0, this.config.worldWidth, this.config.worldHeight);
+    this.world.setBounds(0, 0, this.myConfig.worldWidth, this.myConfig.worldHeight);
 
     this.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -37,6 +40,27 @@ Game.prototype.init = function () {
     this.land.fixedToCamera = true;
 
     this.animations = this.add.group(undefined, 'animations');
+    this.enemies = this.add.group(undefined, 'enemies');
+
+    console.log(this.myConfig);
+
+    if (this.myConfig.hud) {
+        this.hud = new Hud(this, this.myConfig.hud);
+        this.add.existing(this.hud);
+    }
+
+    if (this.myConfig.player) {
+        game.player = new Unit(game, this.myConfig.player);
+        game.add.existing(game.player);
+
+
+        game.player.weapons.children.forEach(weapon => {
+            if (weapon.myConfig.bullet && weapon.myConfig.bullet.z >= 1) {
+                game.world.bringToTop(weapon.bullets);
+            }
+        })
+    }
+
 
     /*
     this.hud = new Hud(this, 0, 0);
@@ -51,8 +75,12 @@ Game.prototype.init = function () {
 
     
 
-    this.enemies = this.add.group(undefined, 'enemies');
     */
+
+
+    this.world.bringToTop(this.enemies);
+    this.world.bringToTop(this.animations);
+    this.world.bringToTop(this.hud);
 }
 
 Game.prototype.start = function (level) {
@@ -74,28 +102,24 @@ Game.prototype.nextLevel = function () {
     this.spawnEnemies(parseInt(this.level * 2));
 }
 
-Game.prototype.onUnitDestroyed = function (unit) {
-    this.score++;
-    this.golds += unit.value;
-}
-
 Game.prototype.unitDestroyed = function (unit) {
     this.score++;
     this.golds += unit.value;
     if (this.enemies.children.length == 1) {
-        //this.menu.show();
-        //this.nextLevel();
+        this.nextLevel();
     }
 }
 
 Game.prototype.spawnEnemies = function (nb) {
     console.log(nb + ' enemies in this wave');
     for (let index = 0; index < nb; index++) {
-        let x = intRnd(0, this.config.worldWidth);
-        let y = intRnd(0, this.config.worldHeight);
-        let type = intRnd(0, enemies.length - 1);
-        let enemy = new Unit(this, x, y, enemies[type]);
-        enemy.onDestroy(this.onUnitDestroyed);
+        let type = intRnd(0, this.myConfig.enemiesConfig.length - 1);
+        let enemyCfg = this.myConfig.enemiesConfig[type];
+        enemyCfg.x = intRnd(0, this.worldWidth);
+        enemyCfg.y = intRnd(0, this.worldHeight);
+
+        let enemy = new Unit(this, enemyCfg);
+        enemy.events.onDestroy.add(this.unitDestroyed, this);
         this.enemies.add(enemy);
     }
 

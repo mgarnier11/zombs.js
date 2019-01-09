@@ -6,10 +6,10 @@ var textBaseStyle = {
 }
 
 var gameObj = {
-    width: 600,
-    height: 600,
-    worldWidth: 2000,
-    worldHeight: 2000,
+    width: 1200,
+    height: 900,
+    worldWidth: 5000,
+    worldHeight: 5000,
     level: 0,
     score: 0,
     golds: 0,
@@ -17,11 +17,11 @@ var gameObj = {
         x: 0,
         y: 0,
         minimap: {
-            x: 500,
-            y: 500,
+            x: 1000,
+            y: 700,
             style: {
-                width: 100,
-                height: 100,
+                width: 200,
+                height: 200,
                 color: "#000000",
                 alliesColor: "#00FF00",
                 enemiesColor: "#FF0000"
@@ -29,19 +29,19 @@ var gameObj = {
         },
         texts: [
             {
-                x: 500,
+                x: 1120,
                 y: 0,
                 text: "score",
                 style: textBaseStyle
             },
             {
-                x: 500,
+                x: 1120,
                 y: 18,
-                text: "gold",
+                text: "golds",
                 style: textBaseStyle
             },
             {
-                x: 500,
+                x: 1120,
                 y: 36,
                 text: "level",
                 style: textBaseStyle
@@ -53,10 +53,80 @@ var gameObj = {
 
     ],
     player: {
-
+        x: 100,
+        y: 100,
+        health: 100,
+        sprite: "ship0",
+        playerControlled: true,
+        maxSpeed: 400,
+        accelerationRate: 5,
+        decelerationRate: 5,
+        turnRate: 4,
+        destroyAnimation: "explosion1",
+        minimapPoint: {
+            height: 7,
+            width: 7,
+            color: "#00FF00"
+        },
+        weapons: [
+            {
+                damage: 100,
+                ranged: false,
+                reload: 100,
+                action: "auto"
+            },
+            {
+                ranged: true,
+                reload: 200,
+                sprite: "turret2",
+                action: "left",
+                multiShot: 3,
+                ammos: 200,
+                rotative: true,
+                x: 30,
+                y: 0,
+                bullet: {
+                    z: 1,
+                    speed: 750,
+                    damage: 20,
+                    lifespan: 1000,
+                    sprite: "bullet1",
+                    hitAnimation: "explosion0",
+                    penetrant: true
+                }
+            }
+        ]
     },
-    enemies: [
-
+    enemiesConfig: [
+        {
+            health: 1000,
+            sprite: "ship1",
+            playerControlled: false,
+            maxSpeed: 100,
+            accelerationRate: 5,
+            decelerationRate: 5,
+            turnRate: 1,
+            destroyAnimation: "explosion1",
+            weapons: [
+                {
+                    damage: 15,
+                    ranged: true,
+                    reload: 1250,
+                    action: "auto",
+                    turnRate: 4,
+                    multiShot: 1,
+                    ammos: 20,
+                    bullet: {
+                        speed: 750,
+                        damage: 0,
+                        lifespan: 1000,
+                        sprite: "bullet2",
+                        hitAnimation: "explosion0",
+                        penetrant: false
+                    }
+                },
+            ]
+        },
     ]
 }
 
@@ -65,7 +135,7 @@ var defSprite = "undf";
 var fps = true;
 
 
-var game = new Game(gameWidth, gameHeight, worldWidth, worldHeight, Phaser.AUTO, 'zombs', { preload: preload, create: create, update: update, render: render });
+var game = new Game(gameObj, 'zombs', { preload: preload, create: create, update: update, render: render });
 
 function preload() {
     game.load.path = 'game/';
@@ -126,23 +196,13 @@ function create() {
 
     if (fps) game.time.advancedTiming = true;
 
-    game.player = new Unit(game, 100, 100, playerObj);
-    game.add.existing(game.player);
-    game.hud.minimap.addChild(game.player.minimapPoint);
-
-
-    game.player.weapons.children.forEach(weapon => {
-        if (weapon.obj.bullet && weapon.obj.bullet.z >= 1) {
-            game.world.bringToTop(weapon.bullets);
-        }
-    })
-
     game.start();
 
     game.camera.follow(game.player);
 }
 
 function update() {
+
     game.physics.arcade.collide(game.player, game.enemies);
     game.physics.arcade.collide(game.enemies);
 
@@ -180,11 +240,7 @@ function render() {
 
 
 
-function intRnd(min, max) {
-    min = Math.ceil(min);
-    max = Math.floor(max);
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}
+
 
 function playAnimation(game, x, y, sprite) {
     if (sprite && game) {
@@ -198,15 +254,4 @@ function playAnimation(game, x, y, sprite) {
 
         animSprite.play('animation');
     }
-}
-
-function mergeObjetcs(targetObj, newObj) {
-    for (var p in newObj) {
-        try {
-            targetObj[p] = newObj[p].constructor == Object ? mergeObjetcs(targetObj[p], newObj[p]) : newObj[p];
-        } catch (e) {
-            targetObj[p] = newObj[p];
-        }
-    }
-    return targetObj;
 }

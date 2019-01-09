@@ -1,37 +1,42 @@
-Hud = function (game, x, y) {
+Hud = function (game, config) {
+    this.setupConfiguration(config);
 
     Phaser.Group.call(this, game, undefined, 'hud');
 
-    this.minimap = this.addChild(new Minimap(game, 500 + x, 500 + y, 'minimap0'));
+    if (this.myConfig.minimap) this.minimap = this.addChild(new Minimap(game, this.myConfig.minimap));
 
-    this.scoreDisplay = this.addChild(new Phaser.Text(game, 500 + x, 0 + y, "Level : 0\nScore : 0\nGolds : 0", {
-        font: "18px Arial",
-        fill: "#FFFFFF",
-        align: 'right',
-        boundsAlignH: 'right'
-    }));
+    if (this.myConfig.texts) {
+        this.texts = [];
+        this.myConfig.texts.forEach(text => {
+            this.texts.push(this.addChild(new Text(game, text)))
+        });
 
-    this.enemiesLeft = this.addChild(new Phaser.Text(game, 350 + x, 582 + y, "Enemies Left : 0", {
-        font: "18px Arial",
-        fill: "#FFFFFF",
-        align: 'right',
-        boundsAlignH: 'right'
-    }))
+    }
+
 
     this.fixedToCamera = true;
+
     this.game = game;
-    this.offsetX = x;
-    this.offsetY = y;
+    this.offsetX = this.myConfig.x;
+    this.offsetY = this.myConfig.y;
 }
 
 Hud.prototype = Object.create(Phaser.Group.prototype);
 Hud.prototype.constructor = Hud;
 
+Hud.prototype.setupConfiguration = function (newConfig) {
+    this.defaultConfig = {
+        x: 0,
+        y: 0,
+        minimap: {},
+        texts: []
+    }
+
+    this.myConfig = mergeObjects(this.defaultConfig, newConfig);
+}
+
 Hud.prototype.update = function () {
     this.children.forEach(child => {
         child.update();
     })
-
-    this.scoreDisplay.setText("Level : " + this.game.level + " \nScore : " + this.game.score + "\nGolds : " + this.game.golds + "\n");
-    this.enemiesLeft.setText("Enemies Left : " + this.game.enemiesLeft());
 };

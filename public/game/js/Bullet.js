@@ -1,15 +1,15 @@
 Bullet = function (game, config, parent) {
     this.setupConfiguration(config);
 
-    Phaser.Sprite.call(this, game, 0, 0, this.config.sprite);
+    Phaser.Sprite.call(this, game, 0, 0, this.myConfig.sprite);
 
     this.weapon = parent;
-    this.z = this.config.z;
-    this.damage = this.config.damage;
-    this.lifeTime = this.config.lifespan;
-    this.bulletSpeed = this.config.speed;
-    this.penetrant = this.config.penetrant;
-    this.hitAnimation = this.config.hitAnimation;
+    this.z = this.myConfig.z;
+    this.damage = this.myConfig.damage;
+    this.lifeTime = this.myConfig.lifespan;
+    this.bulletSpeed = this.myConfig.speed;
+    this.penetrant = this.myConfig.penetrant;
+    this.hitAnimation = this.myConfig.hitAnimation;
 
     this.game = game;
     this.game.physics.arcade.enable(this);
@@ -27,12 +27,15 @@ Bullet = function (game, config, parent) {
     this.body.onMoveComplete = new Phaser.Signal()
     this.body.onMoveComplete.add(this.onMoveComplete, this);
 
-    this.body.stopVelocityOnCollide = !this.config.penetrant;
+    this.body.stopVelocityOnCollide = !this.myConfig.penetrant;
 
     this.overlapTime = 0;
 
     this.kill();
 }
+
+Bullet.prototype = Object.create(Phaser.Sprite.prototype);
+Bullet.prototype.constructor = Bullet;
 
 Bullet.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
@@ -45,11 +48,8 @@ Bullet.prototype.setupConfiguration = function (newConfig) {
         penetrant: false
     }
 
-    this.config = mergeObjects(this.defaultConfig, newConfig);
+    this.myConfig = mergeObjects(this.defaultConfig, newConfig);
 }
-
-Bullet.prototype = Object.create(Phaser.Sprite.prototype);
-Bullet.prototype.constructor = Bullet;
 
 Bullet.prototype.update = function () {
 

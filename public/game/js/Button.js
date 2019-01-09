@@ -18,6 +18,9 @@ Button = function (game, config) {
     });
 }
 
+Button.prototype = Object.create(Phaser.Sprite.prototype);
+Button.prototype.constructor = Button;
+
 Button.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
         x: 0,
@@ -26,11 +29,8 @@ Button.prototype.setupConfiguration = function (newConfig) {
         style: textBaseStyle
     }
 
-    this.config = mergeObjects(this.defaultConfig, newConfig);
+    this.myConfig = mergeObjects(this.defaultConfig, newConfig);
 }
-
-Button.prototype = Object.create(Phaser.Sprite.prototype);
-Button.prototype.constructor = Button;
 
 Button.prototype.onClick = function (handler) {
     this.onClickHandler = handler;
