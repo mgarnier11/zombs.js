@@ -17,7 +17,6 @@ Hud = function (game, config) {
         this.myConfig.buttons.forEach(buttonCfg => {
             this.buttons.push(this.addChild(new Button(game, buttonCfg)))
         });
-        console.log(this.buttons);
     }
     /*
         this.button = this.addChild(new Button(game, {

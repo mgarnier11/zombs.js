@@ -55,19 +55,71 @@ var gameObj = {
                 x: 1050,
                 y: 56,
                 text: {
-                    value: "",
                     base: "Shop",
                     style: {
                         font: "26px Arial",
                         fill: "#FFFFFF"
                     }
                 },
-                sprite: defSprite
+                action: 'showMenu',
+                target: 'shop'
+
+            },
+            {
+                x: 0,
+                y: 0,
+                text: {
+                    base: "Pause",
+                    style: {
+                        font: "26px Arial",
+                        fill: "#FFFFFF"
+                    }
+                },
+                sprite: defSprite,
+                action: 'showMenu',
+                target: 'pause'
+
             },
         ]
-
     },
-    menu: [
+    menus: [{
+        name: 'shop',
+        pauseGame: true,
+        buttons: [
+            {
+                x: 600,
+                y: 450,
+                text: {
+                    base: "Close",
+                    style: {
+                        font: "26px Arial",
+                        fill: "#FFFFFF"
+                    }
+                },
+                action: 'hideMenu',
+                target: 'shop'
+            }
+        ]
+    },
+    {
+        name: 'pause',
+        pauseGame: true,
+        buttons: [
+            {
+                x: 600,
+                y: 450,
+                text: {
+                    base: "Resume",
+                    style: {
+                        font: "26px Arial",
+                        fill: "#FFFFFF"
+                    }
+                },
+                action: 'hideMenu',
+                target: 'pause'
+            }
+        ]
+    },
 
     ],
     player: {
@@ -119,7 +171,7 @@ var gameObj = {
                 sprite: "turret3",
                 action: "right",
                 ammos: 5,
-                rotative: true,
+                rotative: false,
                 x: -50,
                 y: -30,
                 bullet: {
@@ -137,7 +189,7 @@ var gameObj = {
                 sprite: "turret3",
                 action: "right",
                 ammos: 5,
-                rotative: true,
+                rotative: false,
                 x: -50,
                 y: 30,
                 bullet: {

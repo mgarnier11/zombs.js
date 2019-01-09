@@ -50,15 +50,23 @@ Game.prototype.init = function () {
     }
 
     if (this.myConfig.player) {
-        game.player = new Unit(game, this.myConfig.player);
-        game.add.existing(game.player);
+        this.player = new Unit(this, this.myConfig.player);
+        this.add.existing(this.player);
 
 
-        game.player.weapons.children.forEach(weapon => {
+        this.player.weapons.children.forEach(weapon => {
             if (weapon.myConfig.bullet && weapon.myConfig.bullet.z >= 1) {
-                game.world.bringToTop(weapon.bullets);
+                this.world.bringToTop(weapon.bullets);
             }
         })
+    }
+
+    if (this.myConfig.menus) {
+        this.menus = {};
+        this.myConfig.menus.forEach(menu => {
+            this.menus[menu.name] = new Menu(this, menu);
+            this.add.existing(this.menus[menu.name]);
+        });
     }
 
 
