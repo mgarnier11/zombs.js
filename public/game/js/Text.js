@@ -13,7 +13,8 @@ Text.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
         x: 0,
         y: 0,
-        text: "",
+        value: "",
+        base: "BaseText",
         style: textBaseStyle
     }
 
@@ -25,5 +26,5 @@ Text.prototype.update = function () {
 }
 
 Text.prototype.textBuilder = function () {
-    return this.myConfig.text + ' : ' + this.game[this.myConfig.text];
+    return this.myConfig.base.replace('{value}', this.game[this.myConfig.value]);
 }

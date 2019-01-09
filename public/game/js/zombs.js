@@ -29,22 +29,40 @@ var gameObj = {
         },
         texts: [
             {
-                x: 1120,
+                x: 1050,
                 y: 0,
-                text: "score",
+                value: "score",
+                base: "Score : {value}",
                 style: textBaseStyle
             },
             {
-                x: 1120,
+                x: 1050,
                 y: 18,
-                text: "golds",
+                value: "golds",
+                base: "Golds : {value}",
                 style: textBaseStyle
             },
             {
-                x: 1120,
+                x: 1050,
                 y: 36,
-                text: "level",
+                value: "level",
+                base: "Level : {value}",
                 style: textBaseStyle
+            },
+        ],
+        buttons: [
+            {
+                x: 1050,
+                y: 56,
+                text: {
+                    value: "",
+                    base: "Shop",
+                    style: {
+                        font: "26px Arial",
+                        fill: "#FFFFFF"
+                    }
+                },
+                sprite: defSprite
             },
         ]
 
@@ -77,29 +95,65 @@ var gameObj = {
             },
             {
                 ranged: true,
-                reload: 200,
+                reload: 50,
                 sprite: "turret2",
                 action: "left",
-                multiShot: 3,
+                multiShot: 1,
                 ammos: 200,
                 rotative: true,
                 x: 30,
                 y: 0,
                 bullet: {
                     z: 1,
-                    speed: 750,
-                    damage: 20,
+                    speed: 1500,
+                    damage: 5,
                     lifespan: 1000,
-                    sprite: "bullet1",
+                    sprite: "bullet4",
                     hitAnimation: "explosion0",
-                    penetrant: true
+                    penetrant: false
+                }
+            },
+            {
+                ranged: true,
+                reload: 500,
+                sprite: "turret3",
+                action: "right",
+                ammos: 5,
+                rotative: true,
+                x: -50,
+                y: -30,
+                bullet: {
+                    z: 1,
+                    speed: 500,
+                    damage: 50,
+                    lifespan: 2500,
+                    sprite: "bullet0",
+                    hitAnimation: "explosion2"
+                }
+            },
+            {
+                ranged: true,
+                reload: 500,
+                sprite: "turret3",
+                action: "right",
+                ammos: 5,
+                rotative: true,
+                x: -50,
+                y: 30,
+                bullet: {
+                    z: 1,
+                    speed: 500,
+                    damage: 50,
+                    lifespan: 2500,
+                    sprite: "bullet0",
+                    hitAnimation: "explosion2"
                 }
             }
         ]
     },
     enemiesConfig: [
         {
-            health: 1000,
+            health: 500,
             sprite: "ship1",
             playerControlled: false,
             maxSpeed: 100,
@@ -161,6 +215,8 @@ function preload() {
     game.load.image('bullet1', 'assets/bullet1.png');
     game.load.image('bullet2', 'assets/bullet2.png');
     game.load.image('bullet3', 'assets/bullet3.png');
+    game.load.image('bullet4', 'assets/bullet4.png');
+
 
     game.load.image('ship0', 'assets/ship0.png');
     game.load.image('ship1', 'assets/cruiser1.png');

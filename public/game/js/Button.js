@@ -1,14 +1,12 @@
 Button = function (game, config) {
     this.setupConfiguration(config);
 
-    Phaser.Sprite.call(this, game, 0, 0, obj.sprite);
+    Phaser.Sprite.call(this, game, this.myConfig.x, this.myConfig.y, this.myConfig.sprite);
 
     this.game = game;
-    this.offsetX = (obj.x || 0);
-    this.offsetY = (obj.y || 0);
-    this.textStr = (obj.text || 'button');
-    this.style = (obj.style || {});
-    this.text = this.addChild(new Phaser.Text(this.game, 0 + this.offsetX, 0 + this.offsetY, this.textStr, this.style))
+    this.offsetX = this.myConfig.x;
+    this.offsetY = this.myConfig.y;
+    this.text = this.addChild(new Text(this.game, this.myConfig.text))
 
 
     this.inputEnabled = true;
@@ -25,8 +23,7 @@ Button.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
         x: 0,
         y: 0,
-        text: "Button",
-        style: textBaseStyle
+        sprite: defSprite
     }
 
     this.myConfig = mergeObjects(this.defaultConfig, newConfig);

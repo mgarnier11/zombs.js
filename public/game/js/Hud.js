@@ -7,12 +7,32 @@ Hud = function (game, config) {
 
     if (this.myConfig.texts) {
         this.texts = [];
-        this.myConfig.texts.forEach(text => {
-            this.texts.push(this.addChild(new Text(game, text)))
+        this.myConfig.texts.forEach(textCfg => {
+            this.texts.push(this.addChild(new Text(game, textCfg)))
         });
-
     }
 
+    if (this.myConfig.buttons) {
+        this.buttons = [];
+        this.myConfig.buttons.forEach(buttonCfg => {
+            this.buttons.push(this.addChild(new Button(game, buttonCfg)))
+        });
+        console.log(this.buttons);
+    }
+    /*
+        this.button = this.addChild(new Button(game, {
+            x: 100,
+            y: 100,
+            text: {
+                value: "",
+                base: "Menu",
+            },
+            sprite: defSprite
+        }));
+        this.button.onClick((e) => {
+            this.game.paused = !this.game.paused;
+        })
+        */
 
     this.fixedToCamera = true;
 
@@ -29,7 +49,8 @@ Hud.prototype.setupConfiguration = function (newConfig) {
         x: 0,
         y: 0,
         minimap: {},
-        texts: []
+        texts: [],
+        buttons: []
     }
 
     this.myConfig = mergeObjects(this.defaultConfig, newConfig);
