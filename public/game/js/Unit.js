@@ -38,8 +38,10 @@ Unit = function (game, config) {
 
     this.bullets = [];
     if (this.myConfig.weapons) {
-        this.myConfig.weapons.forEach((weapon) => {
-            this.weapons.add(new Weapon(this.game, weapon, this));
+        this.myConfig.weapons.forEach((weaponCfg) => {
+            let weapon = new Weapon(this.game, weaponCfg, this);
+            this[weapon.name] = weapon;
+            this.weapons.add(weapon);
         });
     }
 
@@ -68,12 +70,15 @@ Unit.prototype.setupConfiguration = function (newConfig) {
 }
 
 Unit.prototype.update = function () {
+    if (this.game.myPause) {
+        return undefined;
+    }
+
     this.updateWeapons();
 
     if (this.playerControlled) {
         if (this.game.cursors.left.isDown) this.angle -= this.turnRate;
         else if (this.game.cursors.right.isDown) this.angle += this.turnRate;
-
         if (this.game.cursors.up.isDown & this.currentSpeed < this.maxSpeed) {
             this.currentSpeed += this.accelerationRate;
         }
@@ -114,6 +119,34 @@ Unit.prototype.update = function () {
 
     this.healthBar.update(this.health * 100 / this.maxHealth);
 };
+
+Unit.prototype.upgrade = function (elem) {
+    let values = elem.split('.');
+    console.log(values);
+    if (values.length > 1) {
+
+    } else {
+        switch (values[0]) {
+            case 'health':
+                this.health += 10;
+                this.maxHealth += 10;
+                break;
+            case 'accelerationRate':
+                this.accelerationRate += 0.1;
+                break;
+            case 'maxSpeed':
+                this.maxSpeed += 10;
+                break;
+            default:
+                console.log('noElemDefined');
+                break;
+        }
+
+
+    }
+}
+
+
 
 Unit.prototype.onCollide = function (thisUnit, otherUnit) {
     if (this.game.time.now > this.collideTime) {

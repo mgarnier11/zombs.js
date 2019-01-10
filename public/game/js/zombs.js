@@ -5,6 +5,23 @@ var textBaseStyle = {
     boundsAlignH: 'center'
 }
 
+var test = parseInt('eret');
+console.log(test);
+
+var buttonHideMenuThis = {
+    x: 750,
+    y: 600,
+    text: {
+        base: "Close",
+        style: {
+            font: "26px Arial",
+            fill: "#FFFFFF",
+        }
+    },
+    action: 'hideMenu',
+    target: 'this'
+}
+
 var gameObj = {
     width: 1200,
     height: 900,
@@ -49,6 +66,33 @@ var gameObj = {
                 base: "Level : {value}",
                 style: textBaseStyle
             },
+            {
+                x: 0,
+                y: 846,
+                values: [
+                    "player.health",
+                    "player.maxHealth"
+                ],
+                base: "Health : {value0}/{value1}",
+                style: textBaseStyle
+            },
+            {
+                x: 0,
+                y: 864,
+                value: "player.weaponMelee.damage",
+                base: "Melee Weapon Damages : {value}",
+                style: textBaseStyle
+            },
+            {
+                x: 0,
+                y: 882,
+                values: [
+                    "player.x",
+                    "player.y"
+                ],
+                base: "X : {value0}    Y : {value1}",
+                style: textBaseStyle
+            }
         ],
         buttons: [
             {
@@ -58,69 +102,120 @@ var gameObj = {
                     base: "Shop",
                     style: {
                         font: "26px Arial",
-                        fill: "#FFFFFF"
+                        fill: "#FFFFFF",
                     }
                 },
                 action: 'showMenu',
                 target: 'shop'
-
-            },
-            {
-                x: 0,
-                y: 0,
-                text: {
-                    base: "Pause",
-                    style: {
-                        font: "26px Arial",
-                        fill: "#FFFFFF"
-                    }
-                },
-                sprite: defSprite,
-                action: 'showMenu',
-                target: 'pause'
-
             },
         ]
     },
-    menus: [{
-        name: 'shop',
-        pauseGame: true,
-        buttons: [
-            {
-                x: 600,
-                y: 450,
-                text: {
-                    base: "Close",
-                    style: {
-                        font: "26px Arial",
-                        fill: "#FFFFFF"
-                    }
+    menus: [
+        {
+            name: 'shop',
+            pauseGame: true,
+            buttons: [
+                buttonHideMenuThis,
+                {
+                    x: 500,
+                    y: 300,
+                    text: {
+                        base: "Upgrade Ship",
+                        style: {
+                            font: "26px Arial",
+                            fill: "#FFFFFF",
+                        }
+                    },
+                    action: 'showMenu',
+                    target: 'upgradeShip'
                 },
-                action: 'hideMenu',
-                target: 'shop'
-            }
-        ]
-    },
-    {
-        name: 'pause',
-        pauseGame: true,
-        buttons: [
-            {
-                x: 600,
-                y: 450,
-                text: {
-                    base: "Resume",
-                    style: {
-                        font: "26px Arial",
-                        fill: "#FFFFFF"
-                    }
+                {
+                    x: 500,
+                    y: 350,
+                    text: {
+                        base: "Upgrade Melee Weapon",
+                        style: {
+                            font: "26px Arial",
+                            fill: "#FFFFFF",
+                        }
+                    },
+                    action: 'showMenu',
+                    target: 'upgradeMeleeWeapon'
                 },
-                action: 'hideMenu',
-                target: 'pause'
-            }
-        ]
-    },
-
+                {
+                    x: 500,
+                    y: 400,
+                    text: {
+                        base: "Add Weapon",
+                        style: {
+                            font: "26px Arial",
+                            fill: "#FFFFFF",
+                        }
+                    },
+                    action: 'showMenu',
+                    target: 'addWeapon'
+                }
+            ]
+        },
+        {
+            name: 'upgradeShip',
+            pauseGame: true,
+            buttons: [
+                buttonHideMenuThis,
+                {
+                    x: 500,
+                    y: 300,
+                    text: {
+                        base: "Speed +",
+                        style: {
+                            font: "26px Arial",
+                            fill: "#FFFFFF",
+                        }
+                    },
+                    action: 'upgrade',
+                    target: 'maxSpeed'
+                },
+                {
+                    x: 500,
+                    y: 350,
+                    text: {
+                        base: "Acceleration +",
+                        style: {
+                            font: "26px Arial",
+                            fill: "#FFFFFF",
+                        }
+                    },
+                    action: 'upgrade',
+                    target: 'accelerationRate'
+                },
+                {
+                    x: 500,
+                    y: 400,
+                    text: {
+                        base: "Health +",
+                        style: {
+                            font: "26px Arial",
+                            fill: "#FFFFFF",
+                        }
+                    },
+                    action: 'upgrade',
+                    target: 'health'
+                },
+                {
+                    x: 500,
+                    y: 450,
+                    text: {
+                        base: "Heal",
+                        style: {
+                            font: "26px Arial",
+                            fill: "#FFFFFF",
+                        }
+                    },
+                    action: '',
+                    target: ''
+                },
+            ]
+        },
     ],
     player: {
         x: 100,
@@ -140,12 +235,14 @@ var gameObj = {
         },
         weapons: [
             {
+                name: "weaponMelee",
                 damage: 100,
                 ranged: false,
                 reload: 100,
                 action: "auto"
             },
             {
+                name: "weapon1",
                 ranged: true,
                 reload: 50,
                 sprite: "turret2",
@@ -166,6 +263,7 @@ var gameObj = {
                 }
             },
             {
+                name: "weapon2",
                 ranged: true,
                 reload: 500,
                 sprite: "turret3",
@@ -184,6 +282,7 @@ var gameObj = {
                 }
             },
             {
+                name: "weapon3",
                 ranged: true,
                 reload: 500,
                 sprite: "turret3",
@@ -224,7 +323,7 @@ var gameObj = {
                     ammos: 20,
                     bullet: {
                         speed: 750,
-                        damage: 0,
+                        damage: 10,
                         lifespan: 1000,
                         sprite: "bullet2",
                         hitAnimation: "explosion0",
@@ -233,7 +332,7 @@ var gameObj = {
                 },
             ]
         },
-    ]
+    ],
 }
 
 
@@ -269,6 +368,7 @@ function preload() {
     game.load.image('bullet3', 'assets/bullet3.png');
     game.load.image('bullet4', 'assets/bullet4.png');
 
+    game.load.image('mine', 'assets/mine.png');
 
     game.load.image('ship0', 'assets/ship0.png');
     game.load.image('ship1', 'assets/cruiser1.png');
@@ -310,7 +410,6 @@ function create() {
 }
 
 function update() {
-
     game.physics.arcade.collide(game.player, game.enemies);
     game.physics.arcade.collide(game.enemies);
 

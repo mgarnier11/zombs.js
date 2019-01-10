@@ -30,7 +30,6 @@ Button.prototype.setupConfiguration = function (newConfig) {
         sprite: defSprite,
         action: '',
         target: ''
-
     }
 
     this.myConfig = mergeObjects(this.defaultConfig, newConfig);
@@ -39,10 +38,21 @@ Button.prototype.setupConfiguration = function (newConfig) {
 Button.prototype.executeAction = function () {
     switch (this.action) {
         case 'showMenu':
-            this.game.menus[this.target].show();
+            if (this.target == 'this') {
+                if (this.parent) this.parent.show();
+            } else {
+                this.game.menus[this.target].show();
+            }
             break;
         case 'hideMenu':
-            this.game.menus[this.target].hide();
+            if (this.target == 'this') {
+                if (this.parent) this.parent.hide();
+            } else {
+                this.game.menus[this.target].hide();
+            }
+            break;
+        case 'upgrade':
+            if (this.game.player) this.game.player.upgrade(this.target);
             break;
         default:
             console.log('noActionDefined')

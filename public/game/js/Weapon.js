@@ -4,6 +4,7 @@ Weapon = function (game, config, parent) {
     Phaser.Sprite.call(this, game, this.myConfig.x, this.myConfig.y, this.myConfig.sprite);
 
     this.unit = parent;
+    this.name = this.myConfig.name;
     this.reload = this.myConfig.reload;
     this.damage = this.myConfig.damage;
     this.ranged = this.myConfig.ranged;
@@ -18,9 +19,11 @@ Weapon = function (game, config, parent) {
     if (this.ranged) {
         this.bulletTime = 0;
 
+
         this.bullets = this.game.add.group(undefined, "bulletsGroup", false, true, Phaser.Physics.ARCADE);
 
         if (this.myConfig.bullet && this.myConfig.bullet.sprite) {
+            this.damage = this.myConfig.bullet.damage;
             for (let index = 0; index < this.myConfig.ammos; index++) {
                 this.bullets.add(new Bullet(this.game, this.myConfig.bullet, this));
             }
@@ -36,6 +39,7 @@ Weapon.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
         x: 0,
         y: 0,
+        name: "weapon",
         damage: 1,
         reload: 500,
         sprite: defSprite,
