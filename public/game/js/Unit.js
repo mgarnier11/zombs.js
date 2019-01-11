@@ -5,6 +5,7 @@ Unit = function (game, config) {
 
     this.value = this.myConfig.value;
     this.health = this.myConfig.health;
+    this.upgrades = this.myConfig.upgrades;
     this.maxHealth = this.myConfig.health;
     this.turnRate = this.myConfig.turnRate;
     this.maxSpeed = this.myConfig.maxSpeed;
@@ -146,7 +147,121 @@ Unit.prototype.upgrade = function (elem) {
     }
 }
 
+Unit.prototype.getMenus = function () {
 
+    var menus = [];
+
+    var shipMenuCfg = {
+        name: 'playerMenu',
+        pauseGame: true,
+        buttons: [
+            buttonHideMenuThis,
+            {
+                x: 500,
+                y: 400,
+                text: {
+                    base: "Ship",
+                    style: {
+                        font: "26px Arial",
+                        fill: "#FFFFFF",
+                    }
+                },
+                action: 'showMenu',
+                target: 'playerMenuShip'
+            }
+        ]
+    };
+
+    if (this.upgrades) {
+        menus.push({
+            name: 'playerMenuShip',
+            pauseGame: true,
+            buttons: getButtons(this.upgrades)
+        })
+    }
+
+    var meleeWeapon = this.getMeleeWeapon();
+    if (meleeWeapon.upgrades) {
+        shipMenuCfg.buttons.push({
+            x: 500,
+            y: 450,
+            text: {
+                base: "Melee Weapon",
+                style: {
+                    font: "26px Arial",
+                    fill: "#FFFFFF",
+                }
+            },
+            action: 'showMenu',
+            target: 'playerMenuMeleeWeapon'
+        });
+
+
+        menus.push({
+            name: 'playerMenuMeleeWeapon',
+            pauseGame: true,
+            buttons: getButtons(meleeWeapon.upgrades)
+        })
+    }
+
+    var j = (meleeWeapon.upgrades ? 1 : 0);
+    for (let i = 0; i < this.weapons.children.length; i++) {
+        if (this.weapons.children[i].upgrades && this.weapons.children[i].ranged) {
+            var weapon = this.weapons.children[i];
+            shipMenuCfg.buttons.push({
+                x: 500,
+                y: 450 + j * 50,
+                text: {
+                    base: "Weapon " + j,
+                    style: {
+                        font: "26px Arial",
+                        fill: "#FFFFFF",
+                    }
+                },
+                action: 'showMenu',
+                target: 'playerMenuWeapon' + j
+            });
+
+            menus.push({
+                name: 'playerMenuWeapon' + j,
+                pauseGame: true,
+                buttons: getButtons(weapon.upgrades)
+            })
+
+            j++;
+        }
+    }
+
+    menus.push(shipMenuCfg);
+
+    return menus;
+
+    function getButtons(upgrades) {
+        var buttons = [
+            buttonHideMenuThis,
+        ]
+
+        for (let i = 0; i < upgrades.length; i++) {
+            var upgrade = upgrades[i];
+            buttons.push({
+                x: 500,
+                y: 400 + i * 50,
+                text: {
+                    base: upgrade.value + ' ' + upgrade.target + ' : ' + upgrade.cost + ' golds',
+                    style: {
+                        font: "26px Arial",
+                        fill: "#FFFFFF",
+                    }
+                },
+                action: 'upgrade',
+                target: ''
+            })
+        }
+
+        return buttons;
+    }
+
+}
 
 Unit.prototype.onCollide = function (thisUnit, otherUnit) {
     if (this.game.time.now > this.collideTime) {

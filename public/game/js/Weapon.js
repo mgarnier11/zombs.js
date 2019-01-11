@@ -5,6 +5,7 @@ Weapon = function (game, config, parent) {
 
     this.unit = parent;
     this.name = this.myConfig.name;
+    this.upgrades = this.myConfig.upgrades;
     this.reload = this.myConfig.reload;
     this.damage = this.myConfig.damage;
     this.ranged = this.myConfig.ranged;

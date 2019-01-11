@@ -5,9 +5,6 @@ var textBaseStyle = {
     boundsAlignH: 'center'
 }
 
-var test = parseInt('eret');
-console.log(test);
-
 var buttonHideMenuThis = {
     x: 750,
     y: 600,
@@ -106,7 +103,7 @@ var gameObj = {
                     }
                 },
                 action: 'showMenu',
-                target: 'shop'
+                target: 'playerMenu'
             },
         ]
     },
@@ -116,32 +113,6 @@ var gameObj = {
             pauseGame: true,
             buttons: [
                 buttonHideMenuThis,
-                {
-                    x: 500,
-                    y: 300,
-                    text: {
-                        base: "Upgrade Ship",
-                        style: {
-                            font: "26px Arial",
-                            fill: "#FFFFFF",
-                        }
-                    },
-                    action: 'showMenu',
-                    target: 'upgradeShip'
-                },
-                {
-                    x: 500,
-                    y: 350,
-                    text: {
-                        base: "Upgrade Melee Weapon",
-                        style: {
-                            font: "26px Arial",
-                            fill: "#FFFFFF",
-                        }
-                    },
-                    action: 'showMenu',
-                    target: 'upgradeMeleeWeapon'
-                },
                 {
                     x: 500,
                     y: 400,
@@ -155,65 +126,6 @@ var gameObj = {
                     action: 'showMenu',
                     target: 'addWeapon'
                 }
-            ]
-        },
-        {
-            name: 'upgradeShip',
-            pauseGame: true,
-            buttons: [
-                buttonHideMenuThis,
-                {
-                    x: 500,
-                    y: 300,
-                    text: {
-                        base: "Speed +",
-                        style: {
-                            font: "26px Arial",
-                            fill: "#FFFFFF",
-                        }
-                    },
-                    action: 'upgrade',
-                    target: 'maxSpeed'
-                },
-                {
-                    x: 500,
-                    y: 350,
-                    text: {
-                        base: "Acceleration +",
-                        style: {
-                            font: "26px Arial",
-                            fill: "#FFFFFF",
-                        }
-                    },
-                    action: 'upgrade',
-                    target: 'accelerationRate'
-                },
-                {
-                    x: 500,
-                    y: 400,
-                    text: {
-                        base: "Health +",
-                        style: {
-                            font: "26px Arial",
-                            fill: "#FFFFFF",
-                        }
-                    },
-                    action: 'upgrade',
-                    target: 'health'
-                },
-                {
-                    x: 500,
-                    y: 450,
-                    text: {
-                        base: "Heal",
-                        style: {
-                            font: "26px Arial",
-                            fill: "#FFFFFF",
-                        }
-                    },
-                    action: '',
-                    target: ''
-                },
             ]
         },
     ],
@@ -239,7 +151,19 @@ var gameObj = {
                 damage: 100,
                 ranged: false,
                 reload: 100,
-                action: "auto"
+                action: "auto",
+                upgrades: [
+                    {
+                        target: 'damage',
+                        cost: 5,
+                        value: 1
+                    },
+                    {
+                        target: 'reload',
+                        cost: 5,
+                        value: -10
+                    }
+                ]
             },
             {
                 name: "weapon1",
@@ -260,7 +184,29 @@ var gameObj = {
                     sprite: "bullet4",
                     hitAnimation: "explosion0",
                     penetrant: false
-                }
+                },
+                upgrades: [
+                    {
+                        target: 'bullet.damage',
+                        cost: 5,
+                        value: 1
+                    },
+                    {
+                        target: 'bullet.speed',
+                        cost: 5,
+                        value: 10
+                    },
+                    {
+                        target: 'bullet.lifespan',
+                        cost: 5,
+                        value: 100
+                    },
+                    {
+                        target: 'multishot',
+                        cost: 25,
+                        value: 1
+                    },
+                ]
             },
             {
                 name: "weapon2",
@@ -299,6 +245,28 @@ var gameObj = {
                     sprite: "bullet0",
                     hitAnimation: "explosion2"
                 }
+            }
+        ],
+        upgrades: [
+            {
+                target: 'health',
+                cost: 5,
+                value: 10
+            },
+            {
+                target: 'accelerationRate',
+                cost: 5,
+                value: 0.1
+            },
+            {
+                target: 'maxSpeed',
+                cost: 5,
+                value: 10
+            },
+            {
+                target: 'turnRate',
+                cost: 5,
+                value: 0.1
             }
         ]
     },

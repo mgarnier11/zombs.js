@@ -63,10 +63,18 @@ Game.prototype.init = function () {
 
     if (this.myConfig.menus) {
         this.menus = {};
+
         this.myConfig.menus.forEach(menu => {
             this.menus[menu.name] = new Menu(this, menu);
             this.add.existing(this.menus[menu.name]);
         });
+
+        var menus = this.player.getMenus();
+
+        menus.forEach(menu => {
+            this.menus[menu.name] = new Menu(this, menu);
+            this.add.existing(this.menus[menu.name]);
+        })
     }
 
 
