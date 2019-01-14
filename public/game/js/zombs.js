@@ -178,7 +178,7 @@ var gameObj = {
                 y: 0,
                 bullet: {
                     z: 1,
-                    speed: 1500,
+                    bulletSpeed: 1500,
                     damage: 5,
                     lifespan: 1000,
                     sprite: "bullet4",
@@ -192,9 +192,9 @@ var gameObj = {
                         value: 1
                     },
                     {
-                        target: 'bullet.speed',
+                        target: 'bullet.bulletSpeed',
                         cost: 5,
-                        value: 10
+                        value: 100
                     },
                     {
                         target: 'bullet.lifespan',
@@ -202,7 +202,7 @@ var gameObj = {
                         value: 100
                     },
                     {
-                        target: 'multishot',
+                        target: 'multiShot',
                         cost: 25,
                         value: 1
                     },
@@ -220,7 +220,7 @@ var gameObj = {
                 y: -30,
                 bullet: {
                     z: 1,
-                    speed: 500,
+                    bulletSpeed: 500,
                     damage: 50,
                     lifespan: 2500,
                     sprite: "bullet0",
@@ -239,7 +239,7 @@ var gameObj = {
                 y: 30,
                 bullet: {
                     z: 1,
-                    speed: 500,
+                    bulletSpeed: 500,
                     damage: 50,
                     lifespan: 2500,
                     sprite: "bullet0",
@@ -290,7 +290,7 @@ var gameObj = {
                     multiShot: 1,
                     ammos: 20,
                     bullet: {
-                        speed: 750,
+                        bulletSpeed: 750,
                         damage: 10,
                         lifespan: 1000,
                         sprite: "bullet2",

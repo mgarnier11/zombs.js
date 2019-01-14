@@ -121,29 +121,44 @@ Unit.prototype.update = function () {
     this.healthBar.update(this.health * 100 / this.maxHealth);
 };
 
-Unit.prototype.upgrade = function (elem) {
-    let values = elem.split('.');
-    console.log(values);
-    if (values.length > 1) {
+Unit.prototype.upgrade = function (values) {
+    let target = values.upgrade.target.split('.');
+    if (target.length > 1) {
+        if (values.name == 'this') {
+            val = this[target[0]];
+            for (let i = 1; i < target.length; i++) {
+                val = val[target[i]];
+            }
+            val += values.upgrade.value;
+            this.game.golds -= values.upgrade.cost;
+        } else {
 
-    } else {
-        switch (values[0]) {
-            case 'health':
-                this.health += 10;
-                this.maxHealth += 10;
-                break;
-            case 'accelerationRate':
-                this.accelerationRate += 0.1;
-                break;
-            case 'maxSpeed':
-                this.maxSpeed += 10;
-                break;
-            default:
-                console.log('noElemDefined');
-                break;
+            val = this[values.name][target[0]];
+            for (let i = 1; i < target.length - 1; i++) {
+                val = val[target[i]];
+
+            }
+            val[target[target.length - 1]] += values.upgrade.value;
+            this.game.golds -= values.upgrade.cost;
+
         }
-
-
+    } else {
+        if (values.name == 'this') {
+            switch (target[0]) {
+                case 'health':
+                    this.health += values.upgrade.value;
+                    this.maxHealth += values.upgrade.value;
+                    this.game.golds -= values.upgrade.cost;
+                    break;
+                default:
+                    this[target[0]] += values.upgrade.value;
+                    this.game.golds -= values.upgrade.cost;
+                    break;
+            }
+        } else {
+            this[values.name][target[0]] += values.upgrade.value;
+            this.game.golds -= values.upgrade.cost;
+        }
     }
 }
 
@@ -176,7 +191,7 @@ Unit.prototype.getMenus = function () {
         menus.push({
             name: 'playerMenuShip',
             pauseGame: true,
-            buttons: getButtons(this.upgrades)
+            buttons: getButtons('this', this.upgrades)
         })
     }
 
@@ -200,7 +215,7 @@ Unit.prototype.getMenus = function () {
         menus.push({
             name: 'playerMenuMeleeWeapon',
             pauseGame: true,
-            buttons: getButtons(meleeWeapon.upgrades)
+            buttons: getButtons(meleeWeapon.name, meleeWeapon.upgrades)
         })
     }
 
@@ -225,7 +240,7 @@ Unit.prototype.getMenus = function () {
             menus.push({
                 name: 'playerMenuWeapon' + j,
                 pauseGame: true,
-                buttons: getButtons(weapon.upgrades)
+                buttons: getButtons(weapon.name, weapon.upgrades)
             })
 
             j++;
@@ -236,7 +251,7 @@ Unit.prototype.getMenus = function () {
 
     return menus;
 
-    function getButtons(upgrades) {
+    function getButtons(name, upgrades) {
         var buttons = [
             buttonHideMenuThis,
         ]
@@ -254,7 +269,7 @@ Unit.prototype.getMenus = function () {
                     }
                 },
                 action: 'upgrade',
-                target: ''
+                target: { name: name, upgrade: upgrade }
             })
         }
 

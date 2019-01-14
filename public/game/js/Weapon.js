@@ -1,4 +1,15 @@
 Weapon = function (game, config, parent) {
+    Object.defineProperty(this, "bullet", {
+        get: () => {
+            console.log('get');
+            return this.bullets.getFirst();
+        },
+        set: (value) => {
+            console.log('set');
+            console.log(value);
+        }
+    });
+
     this.setupConfiguration(config);
 
     Phaser.Sprite.call(this, game, this.myConfig.x, this.myConfig.y, this.myConfig.sprite);
@@ -29,6 +40,7 @@ Weapon = function (game, config, parent) {
                 this.bullets.add(new Bullet(this.game, this.myConfig.bullet, this));
             }
         }
+
         this.unit.bullets.push(this.bullets);
     }
 }

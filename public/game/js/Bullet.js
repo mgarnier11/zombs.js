@@ -7,7 +7,7 @@ Bullet = function (game, config, parent) {
     this.z = this.myConfig.z;
     this.damage = this.myConfig.damage;
     this.lifeTime = this.myConfig.lifespan;
-    this.bulletSpeed = this.myConfig.speed;
+    this.bulletSpeed = this.myConfig.bulletSpeed;
     this.penetrant = this.myConfig.penetrant;
     this.hitAnimation = this.myConfig.hitAnimation;
 
@@ -40,7 +40,7 @@ Bullet.prototype.constructor = Bullet;
 Bullet.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
         z: 0,
-        speed: 1000,
+        bulletSpeed: 1000,
         damage: 1,
         lifespan: 1000,
         sprite: defSprite,
