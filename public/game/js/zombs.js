@@ -36,9 +36,7 @@ var gameObj = {
             style: {
                 width: 200,
                 height: 200,
-                color: "#000000",
-                alliesColor: "#00FF00",
-                enemiesColor: "#FF0000"
+                color: "#000000"
             }
         },
         texts: [
@@ -65,7 +63,7 @@ var gameObj = {
             },
             {
                 x: 0,
-                y: 846,
+                y: 828,
                 values: [
                     "player.health",
                     "player.maxHealth"
@@ -75,9 +73,16 @@ var gameObj = {
             },
             {
                 x: 0,
-                y: 864,
+                y: 846,
                 value: "player.weaponMelee.damage",
                 base: "Melee Weapon Damages : {value}",
+                style: textBaseStyle
+            },
+            {
+                x: 0,
+                y: 864,
+                value: "player.weaponMelee.reload",
+                base: "Melee Weapon Reload : {value}",
                 style: textBaseStyle
             },
             {
@@ -225,7 +230,29 @@ var gameObj = {
                     lifespan: 2500,
                     sprite: "bullet0",
                     hitAnimation: "explosion2"
-                }
+                },
+                upgrades: [
+                    {
+                        target: 'bullet.damage',
+                        cost: 5,
+                        value: 1
+                    },
+                    {
+                        target: 'bullet.bulletSpeed',
+                        cost: 5,
+                        value: 100
+                    },
+                    {
+                        target: 'bullet.lifespan',
+                        cost: 5,
+                        value: 100
+                    },
+                    {
+                        target: 'reload',
+                        cost: 10,
+                        value: -10
+                    }
+                ]
             },
             {
                 name: "weapon3",
@@ -244,7 +271,29 @@ var gameObj = {
                     lifespan: 2500,
                     sprite: "bullet0",
                     hitAnimation: "explosion2"
-                }
+                },
+                upgrades: [
+                    {
+                        target: 'bullet.damage',
+                        cost: 5,
+                        value: 1
+                    },
+                    {
+                        target: 'bullet.bulletSpeed',
+                        cost: 5,
+                        value: 100
+                    },
+                    {
+                        target: 'bullet.lifespan',
+                        cost: 5,
+                        value: 100
+                    },
+                    {
+                        target: 'reload',
+                        cost: 10,
+                        value: -10
+                    }
+                ]
             }
         ],
         upgrades: [
@@ -280,6 +329,11 @@ var gameObj = {
             decelerationRate: 5,
             turnRate: 1,
             destroyAnimation: "explosion1",
+            minimapPoint: {
+                height: 7,
+                width: 7,
+                color: "#FFFF00"
+            },
             weapons: [
                 {
                     damage: 15,
@@ -375,6 +429,8 @@ function create() {
     game.start();
 
     game.camera.follow(game.player);
+
+    console.log(game.player);
 }
 
 function update() {
@@ -395,11 +451,11 @@ function update() {
 
 
 
-    if (!game.camera.atLimit.x) {
+    if (!game.camera.atLimit.x && !game.myPause) {
         game.land.tilePosition.x -= (game.player.body.velocity.x * game.time.physicsElapsed);
     }
 
-    if (!game.camera.atLimit.y) {
+    if (!game.camera.atLimit.y && !game.myPause) {
         game.land.tilePosition.y -= (game.player.body.velocity.y * game.time.physicsElapsed);
     }
 

@@ -3,7 +3,9 @@ Hud = function (game, config) {
 
     Phaser.Group.call(this, game, undefined, 'hud');
 
-    if (this.myConfig.minimap) this.minimap = this.addChild(new Minimap(game, this.myConfig.minimap));
+    if (this.myConfig.minimap) {
+        this.minimap = this.addChild(new Minimap(game, this.myConfig.minimap));
+    }
 
     if (this.myConfig.texts) {
         this.texts = [];
@@ -47,7 +49,7 @@ Hud.prototype.setupConfiguration = function (newConfig) {
     this.defaultConfig = {
         x: 0,
         y: 0,
-        minimap: {},
+        minimap: null,
         texts: [],
         buttons: []
     }
